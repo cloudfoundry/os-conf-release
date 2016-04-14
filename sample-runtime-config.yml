@@ -1,0 +1,12 @@
+releases:
+  - name: login_banner
+    version: VERSION
+
+addons:
+  - name: login_banner
+    jobs:
+    - name: login_banner
+      release: login_banner
+    properties:
+      issue:
+        login_banner: LOGIN_BANNER_TEXT

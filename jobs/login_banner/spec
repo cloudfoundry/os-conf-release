@@ -1,0 +1,6 @@
+---
+name: login_banner
+templates:
+  pre-start.erb: bin/pre-start
+
+packages:
