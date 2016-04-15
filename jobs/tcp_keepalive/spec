@@ -1,0 +1,18 @@
+---
+name: tcp_keepalive
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  tcp_keepalive.time:
+    description: The interval between the last data packet sent and the first keepalive probe (seconds).
+    default: 120
+
+  tcp_keepalive.interval:
+    description: The interval between subsequential keepalive probes, regardless of what the connection has exchanged in the meantime (seconds).
+    default: 30
+
+  tcp_keepalive.probes:
+    description: The number of unacknowledged probes to send before considering the connection dead and notifying the application layer.
+    default: 8
