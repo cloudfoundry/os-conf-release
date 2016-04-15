@@ -1,6 +1,6 @@
 releases:
   - name: login_banner
-    version: 0+dev.14
+    version: 0+dev.17
 
 addons:
   - name: login_banner
@@ -8,7 +8,8 @@ addons:
     - name: login_banner
       release: login_banner
     properties:
-      text: |
-        Multi
-        line
-        example
+      login_banner:
+        text: |
+          Multi
+          line
+          example

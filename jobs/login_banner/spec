@@ -5,5 +5,5 @@ templates:
   pre-start.sh.erb: bin/pre-start
 
 properties:
-  text:
-    description: Text that you see when login
+  login_banner.text:
+    description: Login banner text
