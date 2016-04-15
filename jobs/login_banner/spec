@@ -1,6 +1,9 @@
 ---
 name: login_banner
-templates:
-  pre-start.erb: bin/pre-start
 
-packages:
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  text:
+    description: Text that you see when login

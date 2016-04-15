@@ -1,5 +1,5 @@
 #!/bin/bash
 
-if [ -f /etc/issue.net ]; then
-  echo "<%= p('issue.login_banner')%>" > /etc/issue.net
-fi
+set -ex
+
+echo "<%= p('text') %>" > /etc/issue
