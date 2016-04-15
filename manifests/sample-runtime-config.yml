@@ -1,6 +1,6 @@
 releases:
   - name: login_banner
-    version: 0+dev.17
+    version: 0+dev.18
 
 addons:
   - name: login_banner
