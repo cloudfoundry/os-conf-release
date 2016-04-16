@@ -5,3 +5,10 @@ set -ex
 sysctl net.ipv4.tcp_keepalive_time=<%= p('tcp_keepalive.time') %>
 sysctl net.ipv4.tcp_keepalive_intvl=<%= p('tcp_keepalive.interval') %>
 sysctl net.ipv4.tcp_keepalive_probes=<%= p('tcp_keepalive.probes') %>
+
+# In case VM is restarted
+cat > /etc/sysctl.d/70-bosh-tcp-keepalive.conf <<EOF
+net.ipv4.tcp_keepalive_time=<%= p('tcp_keepalive.time') %>
+net.ipv4.tcp_keepalive_intvl=<%= p('tcp_keepalive.interval') %>
+net.ipv4.tcp_keepalive_probes=<%= p('tcp_keepalive.probes') %>
+EOF
