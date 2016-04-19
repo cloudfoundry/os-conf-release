@@ -3,6 +3,17 @@
 set -ex
 
 <% p('users').each do |user_hash| %>
+
 <%= "getent passwd #{user_hash['name']} > /dev/null || useradd #{user_hash['name']}" %>
-<%= "echo  '#{user_hash['name']}:#{user_hash['crypted_password']}' | chpasswd -e" %>
+
+<% if !user_hash['crypted_password'].nil? %>
+
+<%= "echo '#{user_hash['name']}:#{user_hash['crypted_password']}' | chpasswd -e" %>
+
+<% elsif !user_hash['public_key'].nil?  %>
+
+<%= "mkdir -p ~#{user_hash['name']}/.ssh; echo '#{user_hash['public_key']}' > ~#{user_hash['name']}/.ssh/authorized_keys" %>
+
+<% end %>
+
 <% end %>
