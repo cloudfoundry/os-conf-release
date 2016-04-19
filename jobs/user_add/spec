@@ -1,0 +1,15 @@
+---
+name: user_add
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  users:
+    description: |
+      Array of user hashes. Each user should specify a name key, and one of either key-value (not both):
+        crypted_password:<sha512 encrypted password>
+        - or -
+        public_key:<public_key>
+    example:
+      "users: [{name:user1,public_key:<public-key>},{name:user2,crypted_password:<sha512>}]"

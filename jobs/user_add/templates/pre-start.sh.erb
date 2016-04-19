@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -ex
+
+<% p('users').each do |user_hash| %>
+<%= "getent passwd #{user_hash['name']} > /dev/null || useradd #{user_hash['name']}" %>
+<%= "echo  '#{user_hash['name']}:#{user_hash['crypted_password']}' | chpasswd -e" %>
+<% end %>
