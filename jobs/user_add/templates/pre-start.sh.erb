@@ -22,7 +22,6 @@ set -ex
       if !crypted_password.nil? && !crypted_password.match(/^\$6\$/)
         raise "User: #{user} with crypted_password: #{crypted_password} does not appear to be a SHA512 encrypted password."
       end
-
       %>
 
   getent passwd <%=user%> > /dev/null || useradd <%=user%>

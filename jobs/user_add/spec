@@ -7,9 +7,15 @@ templates:
 properties:
   users:
     description: |
-      Array of user hashes. Each user should specify a name key, and one of either key-value (not both):
-        crypted_password:<sha512 encrypted password>
-        - or -
-        public_key:<public_key>
+      Array of user hashes. Each user should specify a `name` attribute, and one of
+      either `crypted_password` or `public_key`. Users will not be deleted if
+      they are removed from this list after a successful update. All of the
+      authorized keys for the users will be overwritten with the public key you
+      specify.
     example:
-      "users: [{name:user1,public_key:<public-key>},{name:user2,crypted_password:<sha512>}]"
+      users:
+      - name: user1
+        public_key: ssh-rsa AAAA ...
+      - name: user2
+        # mkpasswd -m sha-512 <PASSWORD> <SALT>
+        crypted_password: $6$saltysalt$eF06vmEKaMhOr8jcnyfJJGuaU/Khq3DpH4M/7T.ziGNjhEEv3o9tgaX5VciMGAbgfE0CH9XrcpHi9kgmVv1Z2.
