@@ -8,19 +8,19 @@ set -ex
       public_key = user_hash['public_key']
 
       if user.nil? || user.empty?
-        raise "User must be configured with a name. '#{user_hash.pretty_inspect}'"
+        raise "User must be configured with a 'name' attribute. '#{user_hash}'"
       end
 
       if !crypted_password.nil? && !public_key.nil?
-        raise "User: #{user} is configured with both 'crypted_password' and 'public_key'. Choose one."
+        raise "User: '#{user}' is configured with both 'crypted_password' and 'public_key'. Choose one."
       end
 
       if crypted_password.nil? && public_key.nil?
-        raise "User: #{user} must contain one of 'crypted_password' or 'public_key' key/values."
+        raise "User: '#{user}' must contain one of 'crypted_password' or 'public_key' key/values."
       end
 
       if !crypted_password.nil? && !crypted_password.match(/^\$6\$/)
-        raise "User: #{user} with crypted_password: #{crypted_password} does not appear to be a SHA512 encrypted password."
+        raise "User: '#{user}' with crypted_password: '#{crypted_password}' does not appear to be a SHA512 encrypted password."
       end
       %>
 
