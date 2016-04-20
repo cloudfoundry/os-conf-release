@@ -3,17 +3,38 @@
 set -ex
 
 <% p('users').each do |user_hash| %>
+  <%  user = user_hash['name']
+      crypted_password = user_hash['crypted_password']
+      public_key = user_hash['public_key']
 
-<%= "getent passwd #{user_hash['name']} > /dev/null || useradd #{user_hash['name']}" %>
+      if user.nil? || user.empty?
+        raise "User must be configured with a name. '#{user_hash.pretty_inspect}'"
+      end
 
-<% if !user_hash['crypted_password'].nil? %>
+      if !crypted_password.nil? && !public_key.nil?
+        raise "User: #{user} is configured with both 'crypted_password' and 'public_key'. Choose one."
+      end
 
-<%= "echo '#{user_hash['name']}:#{user_hash['crypted_password']}' | chpasswd -e" %>
+      if crypted_password.nil? && public_key.nil?
+        raise "User: #{user} must contain one of 'crypted_password' or 'public_key' key/values."
+      end
 
-<% elsif !user_hash['public_key'].nil?  %>
+      if !crypted_password.nil? && !crypted_password.match(/^\$6\$/)
+        raise "User: #{user} with crypted_password: #{crypted_password} does not appear to be a SHA512 encrypted password."
+      end
 
-<%= "mkdir -p ~#{user_hash['name']}/.ssh; echo '#{user_hash['public_key']}' > ~#{user_hash['name']}/.ssh/authorized_keys" %>
+      %>
 
-<% end %>
+  getent passwd <%=user%> > /dev/null || useradd <%=user%>
+  usermod -G vcap,admin,bosh_sudoers <%=user%>
 
+  <% if !crypted_password.nil? %>
+    echo '<%=user%>:<%=crypted_password%>' | chpasswd -e
+  <% elsif !public_key.nil?  %>
+    mkdir -p ~<%=user%>/.ssh
+    echo '<%=public_key%>' > ~<%=user%>/.ssh/authorized_keys
+    chmod 700 ~<%=user%>/.ssh
+    chmod 600 ~<%=user%>/.ssh/authorized_keys
+    chown -R <%=user%> ~<%=user%>/.ssh
+  <% end %>
 <% end %>
