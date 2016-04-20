@@ -1,0 +1,23 @@
+---
+packages: []
+jobs:
+- name: login_banner
+  version: 69f84e520b5ce9752f063f18d393e7f607bfdfc3
+  fingerprint: 69f84e520b5ce9752f063f18d393e7f607bfdfc3
+  sha1: 29cd627a6241c110b6caec1ef4e4cdeefca63bfe
+- name: tcp_keepalive
+  version: 2deb76c6a97ba38bc260cf629efa0f765052f686
+  fingerprint: 2deb76c6a97ba38bc260cf629efa0f765052f686
+  sha1: e41a630891f3f4756436b8ca894c34cdd3bc3206
+- name: user_add
+  version: 555870ee87ab15036914685716cc1b74d4afda8a
+  fingerprint: 555870ee87ab15036914685716cc1b74d4afda8a
+  sha1: 3f819a560d5491614921baddfcf4c02f7f8c7dd0
+license:
+  version: 30b64a20e5520bee77bc283c773b839f7bdf3d86
+  fingerprint: 30b64a20e5520bee77bc283c773b839f7bdf3d86
+  sha1: 4e3da22aec5530269a747ece37d2c30d8f2c838d
+commit_hash: b5f0e0cc
+uncommitted_changes: true
+name: os-conf
+version: '4'
