@@ -24,15 +24,19 @@ set -ex
       end
       %>
 
-  getent passwd <%=user%> > /dev/null || useradd <%=user%>
+  getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%>
+  passwd -d <%=user%>
   usermod -G vcap,admin,bosh_sudoers <%=user%>
+
+  mkdir -p ~<%=user%>/.ssh
+  chmod 700 ~<%=user%>/.ssh
+  rm -f ~<%=user%>/.ssh/authorized_keys
+  chown -R <%=user%> ~<%=user%>/.ssh
 
   <% if !crypted_password.nil? %>
     echo '<%=user%>:<%=crypted_password%>' | chpasswd -e
   <% elsif !public_key.nil?  %>
-    mkdir -p ~<%=user%>/.ssh
     echo '<%=public_key%>' > ~<%=user%>/.ssh/authorized_keys
-    chmod 700 ~<%=user%>/.ssh
     chmod 600 ~<%=user%>/.ssh/authorized_keys
     chown -R <%=user%> ~<%=user%>/.ssh
   <% end %>
