@@ -1,0 +1,13 @@
+releases:
+- name: os-conf
+  version: <RELEASE VERSION>
+
+addons:
+- name: os-configuration
+  jobs:
+  - name: set_mtu
+    release: os-conf
+  properties:
+    set_mtu:
+      interface: eth0
+      mtu: 1500
