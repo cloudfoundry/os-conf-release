@@ -1,6 +1,6 @@
 releases:
 - name: os-conf
-  version: 7+dev1
+  version: 7+dev3
 
 addons:
 - name: os_configuration

@@ -2,5 +2,5 @@
 
 set -ex
 
-echo search <%=p('search_domain')%> >> /etc/resolv.conf
-
+echo search <%=p('search_domain')%> >> /etc/resolvconf/resolv.conf.d/base
+/sbin/resolvconf -u
