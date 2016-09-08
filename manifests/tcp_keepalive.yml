@@ -1,6 +1,6 @@
 releases:
 - name: os-conf
-  version: 3
+  version: 6
 
 addons:
 - name: networking
