@@ -6,7 +6,5 @@ templates:
 
 properties:
   search_domain:
-    description: Default resolv.conf serach domain
-    example:
-      search_domain: "pivotal.io"
-
+    description: Set resolv.conf search domain
+    example: "pivotal.io"
