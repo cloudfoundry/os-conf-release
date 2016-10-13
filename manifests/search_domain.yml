@@ -1,0 +1,11 @@
+releases:
+- name: os-conf
+  version: 7+dev3
+
+addons:
+- name: os_configuration
+  jobs:
+  - name: search_domain
+    release: os-conf
+  properties:
+    search_domain: "google.com"

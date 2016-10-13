@@ -1,0 +1,12 @@
+---
+name: search_domain
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  search_domain:
+    description: Default resolv.conf serach domain
+    example:
+      search_domain: "pivotal.io"
+
