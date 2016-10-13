@@ -1,15 +1,16 @@
----
 builds:
-  241ae647-def5-484b-bc3f-9124e6bbcd00:
-    version: '1'
   7f4a117f-75fc-4e85-9b37-d1d8411e9e74:
-    version: '2'
-  537ea7cd-f9ed-4362-90bb-53b16be8eb63:
-    version: '3'
+    version: "2"
   98dfeb52-4304-4eef-979e-57bf53e621cb:
-    version: '4'
+    version: "4"
+  241ae647-def5-484b-bc3f-9124e6bbcd00:
+    version: "1"
+  537ea7cd-f9ed-4362-90bb-53b16be8eb63:
+    version: "3"
+  676727b7-0e01-4100-4e59-bd80531837b2:
+    version: "7"
   ac79e904-67df-4cce-9099-266e87fc69c3:
-    version: '5'
+    version: "5"
   f911e16a-e49a-4579-b5a2-b99620e8d057:
-    version: '6'
-format-version: '2'
+    version: "6"
+format-version: "2"

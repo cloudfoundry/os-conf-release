@@ -1,0 +1,26 @@
+name: os-conf
+version: "7"
+commit_hash: 3acdaf3
+uncommitted_changes: false
+packages: []
+jobs:
+- name: login_banner
+  version: 83fdcd1fa5df70c0bda867b3b873f6c4fdf64a90
+  fingerprint: 83fdcd1fa5df70c0bda867b3b873f6c4fdf64a90
+  sha1: 8ca8695fcedfb0ecb9b50cc9fd02a348bc61c153
+- name: search_domain
+  version: e6e8b285838d02c2d9c1b8c5df16d7977b0532e8
+  fingerprint: e6e8b285838d02c2d9c1b8c5df16d7977b0532e8
+  sha1: 32a0ee7e7d1e9938abda4708fa6461b49bbc6bec
+- name: tcp_keepalive
+  version: f8062f5cb07cb29df43b007948ae05515e69fa2b
+  fingerprint: f8062f5cb07cb29df43b007948ae05515e69fa2b
+  sha1: bba16070c0dc722e3eb7c1aec3dc558d656348fa
+- name: user_add
+  version: 6f2bed2c24bb639fb2b4e3f61752468fc5b12ba7
+  fingerprint: 6f2bed2c24bb639fb2b4e3f61752468fc5b12ba7
+  sha1: a70445483d150bd164e386f2d1fb85e799dd6859
+license:
+  version: 30b64a20e5520bee77bc283c773b839f7bdf3d86
+  fingerprint: 30b64a20e5520bee77bc283c773b839f7bdf3d86
+  sha1: 4e3da22aec5530269a747ece37d2c30d8f2c838d
