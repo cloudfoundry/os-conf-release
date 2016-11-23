@@ -26,7 +26,12 @@ set -ex
 
   getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%>
   passwd -d <%=user%>
-  usermod -G vcap,admin,bosh_sudoers <%=user%>
+
+  if grep -q 'bosh_sshers' /etc/group; then
+    usermod -G vcap,admin,bosh_sudoers,bosh_sshers <%=user%>
+  else
+    usermod -G vcap,admin,bosh_sudoers <%=user%>
+  fi
 
   mkdir -p ~<%=user%>/.ssh
   chmod 700 ~<%=user%>/.ssh
