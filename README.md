@@ -6,15 +6,8 @@ BOSH Release that enables configuration of the Operating System
 - change TCP keepalive kernel args (job: `tcp_keepalive`)
 - configure resolv.conf search domain (job: `search_domain`)
 - add UNIX users to VM (job: `user_add`)
-- customize `limits.conf` (job: `limits`)
 
-## Upload the Release to the BOSH Director
-
-```
-bosh upload-release https://bosh.io/d/github.com/cloudfoundry/os-conf-release
-```
-
-## BOSH Manifests / Runtime Config
+## Usage
 
 Include the release:
 
