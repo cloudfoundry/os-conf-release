@@ -33,41 +33,37 @@ addons:
     jobs:
     - name: login_banner
       release: os-conf
+      properties:
+        login_banner:
+          text: |
+            Authorized Use Only.
+            Unauthorized use will be prosecuted to the fullest extent of the law.
     - name: user_add
       release: os-conf
       properties:
-      login_banner:
-        text: |
-          Authorized Use Only.
-          Unauthorized use will be prosecuted to the fullest extent of the law.
-      users:
-      - name: operator
-        # crypted password created with `perl -e 'print crypt("password","\$6\$saltsalt\$") . "\n"'`
-        # (does not work on macOS)
-        crypted_password: "$6$HHH8p917$mZjPv/QkYutmQNkxBqEA2nC08zFBDbB482R0v6FyQfT31FZIqEfDTr024LbPFJWcSrwaEYcaKW75FnqHhLqYR."
-      - name: backup
-        public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbss5XtLYRYDeV8AmouVYOHmYPxPsN4F59fZnY4kJnimM3sk5TbP0ow19GMDppQOPzAQ1TcYH4sYhpnxwq5f32XYtw12rFnO8BatHISWIdjoEjHfdA1qLIMGouWZPbGIQ1qURbfJdR9e2shS7U/WSXD+AJ9Zy0ZKTsIvlukWSX8Nsxvfn7VaAFvhgI3YPmhjV3TCEVMDsWGbBXlMq+qiJt22JEOw+3dnrvfGzRUULGznO/8y4NvVQsQc5KGnJkeQWkmlOIrhUGYwd/hMn6zQEIxkR4elmwp+pjyLR0qYLUFjpMn2GJMG7lvTzF8SzQLhzTVrjW1E3nve2eCuJ5bB6/"
+        users:
+        - name: backup
+          public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbss5XtLYRYDeV8AmouVYOHmYPxPsN4F59fZnY4kJnimM3sk5TbP0ow19GMDppQOPzAQ1TcYH4sYhpnxwq5f32XYtw12rFnO8BatHISWIdjoEjHfdA1qLIMGouWZPbGIQ1qURbfJdR9e2shS7U/WSXD+AJ9Zy0ZKTsIvlukWSX8Nsxvfn7VaAFvhgI3YPmhjV3TCEVMDsWGbBXlMq+qiJt22JEOw+3dnrvfGzRUULGznO/8y4NvVQsQc5KGnJkeQWkmlOIrhUGYwd/hMn6zQEIxkR4elmwp+pjyLR0qYLUFjpMn2GJMG7lvTzF8SzQLhzTVrjW1E3nve2eCuJ5bB6/"
 ```
 
 In this example, we configure our BOSH deployment manifest to configure the DNS
-search domain to `pivotal.io` and the TCP keepalive kernel settings and set the
-number of open files to 16384
+search domain to `pivotal.io` and the TCP keepalive kernel settings:
 
 ```yaml
 instance_groups:
 - name: network-infrastructure
   jobs:
-  - name: firewall-nat
+  - name: tcp_keepalive
     release: os-conf
     properties:
       tcp_keepalive:
         time:     120
         interval:  30
         probes:     8
+  - name: search_domain
+    release: os-conf
+    properties:
       search_domain: pivotal.io
-      limits_conf: |
-        vcap  soft  nofile  16384
-        vcap  hard  nofile  16384
 ```
 
 ##  Examples

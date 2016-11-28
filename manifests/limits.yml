@@ -21,7 +21,7 @@ instance_groups:
   stemcell: ubuntu
   templates:
   - release: os-conf
-    name: limits
+    name: limits_not_recommended
   - release: os-conf
     name: user_add
   properties:
@@ -43,7 +43,7 @@ instance_groups:
   stemcell: centos
   templates:
   - release: os-conf
-    name: limits
+    name: limits_not_recommended
   - release: os-conf
     name: user_add
   properties:

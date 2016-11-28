@@ -1,0 +1,25 @@
+---
+name: limits_not_recommended
+
+description: |
+  This job is not recommended. Firstly, it blindly copies in a configuration
+  file with no error-checking, potentially causing deployment failures.
+  Secondly, it encourages the increase of system limits to work around
+  broken BOSH jobs, when effort is better spent fixing the BOSH jobs (e.g.
+  increasing `nofile` to get around a faulty long-running BOSH job that leaks file
+  descriptors and finally fails).
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+  limits.conf.erb: etc/limits.conf
+
+properties:
+  limits_conf:
+    description: |
+      Linux `limits.conf` file https://linux.die.net/man/5/limits.conf'
+      Does not overwrite the existing limits.conf file; instead, it installs
+      a secondary limits.conf file in `/etc/security/limits.d/`.
+    default: ''
+    example: |
+      vcap  soft  nofile  16384
+      vcap  hard  nofile  16384
