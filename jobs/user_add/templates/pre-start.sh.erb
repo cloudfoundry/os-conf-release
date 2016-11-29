@@ -33,6 +33,7 @@ set -ex
     usermod -G vcap,admin,bosh_sudoers <%=user%>
   fi
 
+  chmod 700 ~<%=user%>
   mkdir -p ~<%=user%>/.ssh
   chmod 700 ~<%=user%>/.ssh
   rm -f ~<%=user%>/.ssh/authorized_keys
