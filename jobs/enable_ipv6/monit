@@ -1,0 +1,5 @@
+check process enable_ipv6
+  with pidfile /var/vcap/sys/run/enable_ipv6/pid
+  start program "/var/vcap/jobs/enable_ipv6/bin/ctl start"
+  stop program "/var/vcap/jobs/enable_ipv6/bin/ctl stop"
+  group vcap

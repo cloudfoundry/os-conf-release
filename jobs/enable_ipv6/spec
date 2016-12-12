@@ -1,0 +1,10 @@
+---
+name: enable_ipv6
+
+templates:
+  ctl.erb: bin/ctl
+  sysctl.conf.erb: etc/sysctl.d/61-bosh-enable_ipv6-release.conf
+
+packages: []
+
+properties: {}

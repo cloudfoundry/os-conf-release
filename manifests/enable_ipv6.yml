@@ -1,0 +1,39 @@
+name: enable_ipv6
+
+releases:
+- name: os-conf
+  version: latest
+
+stemcells:
+- alias: ubuntu
+  os: ubuntu-trusty
+  version: latest
+- alias: centos
+  os: centos-7
+  version: latest
+
+instance_groups:
+- name: enable_ipv6-ubuntu
+  instances: 1
+  networks:
+  - name: default
+  vm_type: default
+  stemcell: ubuntu
+  templates:
+  - release: os-conf
+    name: enable_ipv6
+- name: enable_ipv6-centos
+  instances: 1
+  networks:
+  - name: default
+  vm_type: default
+  stemcell: centos
+  templates:
+  - release: os-conf
+    name: enable_ipv6
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
