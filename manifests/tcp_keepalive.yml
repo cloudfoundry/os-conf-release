@@ -1,9 +1,0 @@
-releases:
-- name: os-conf
-  version: 6
-
-addons:
-- name: networking
-  jobs:
-  - name: tcp_keepalive
-    release: os-conf
