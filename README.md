@@ -6,6 +6,7 @@ BOSH Release that enables configuration of the Operating System
 - change TCP keepalive kernel args (job: `tcp_keepalive`)
 - configure resolv.conf search domain (job: `search_domain`)
 - add UNIX users to VM (job: `user_add`)
+- enable IPv6 (job: `enable_ipv6`)
 
 ## Usage
 
@@ -57,6 +58,19 @@ instance_groups:
     release: os-conf
     properties:
       search_domain: pivotal.io
+```
+
+In this example, we enable the IPv6 protocol (note: there are no properties
+for the `enable_ipv6` job):
+
+```
+instance_groups:
+- name: network-infrastructure
+  jobs:
+  - name: enable_ipv6
+    templates:
+    - release: os-conf
+      name: enable_ipv6
 ```
 
 ##  Examples
