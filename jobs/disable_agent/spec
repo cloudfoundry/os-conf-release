@@ -1,0 +1,7 @@
+---
+name: disable_agent
+
+templates:
+  post-start: bin/post-start
+
+properties: {}

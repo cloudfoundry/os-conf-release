@@ -1,0 +1,16 @@
+#!/bin/bash
+
+echo "`date`: Queued disable agent"
+
+(
+  echo "`date`: In 30 secs..."
+  sleep 30
+  echo "`date`: Killing bosh-agent"
+  killall bosh-agent
+  echo "`date`: Stopping bosh-agent permanently"
+  sv stop agent
+) &
+
+disown
+
+exit 0
