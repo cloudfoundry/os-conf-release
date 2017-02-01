@@ -3,8 +3,8 @@
 echo "`date`: Queued disable agent"
 
 (
-  echo "`date`: In 30 secs..."
-  sleep 30
+  echo "`date`: In 60 secs..."
+  sleep 60
   echo "`date`: Killing bosh-agent"
   killall bosh-agent
   echo "`date`: Stopping bosh-agent permanently"
