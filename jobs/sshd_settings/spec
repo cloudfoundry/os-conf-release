@@ -1,0 +1,30 @@
+---
+name: sshd_settings
+templates:
+  bin/pre-start: bin/pre-start
+  etc/trusted_ca: etc/trusted_ca
+properties:
+  authorized_principals:
+    default: {}
+    description: "A hash of username (string) => principals ([]string) for restricting trusted CA-based access."
+  disable_authorized_keys:
+    default: false
+    description: "If true, disables user-specific authorized_keys files (requiring all SSH connections to be using signed public keys; this breaks `bosh ssh`!)."
+  disable_password_authentication:
+    default: false
+    description: "If true, disables password authentication (requiring all SSH connections to be public key-based)."
+  disable_print_last_log:
+    default: true
+    description: "If true, do not print information about recent logins."
+  host_key.rsa:
+    description: "Set the RSA host key of the server (this breaks `bosh ssh`)."
+  host_key.dsa:
+    description: "Set the DSA host key of the server (this breaks `bosh ssh`)."
+  host_key.ecdsa:
+    description: "Set the ECDSA host key of the server (this breaks `bosh ssh`)."
+  log_level:
+    default: INFO
+    description: "Set the log level for sshd (QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, and DEBUG3)."
+  trusted_ca:
+    default: ~
+    description: "Trust user keys signed with this OpenSSH or PEM-formatted certificate."
