@@ -1,0 +1,24 @@
+---
+name: gateway_for_interface
+
+description: |
+  Configure default gateway for network interfaces, see simple guide of policy routing in
+  http://blog.scottlowe.org/2013/05/29/a-quick-introduction-to-linux-policy-routing/
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  routings:
+    description: |
+      Array of policy routing hashes. Each routing should specify attributes for `interface_name' and `default_gateway'.
+      The job will create a new route table named `interface_name' and add a new default route for traffic of
+      `interface_name' to make them go out via `default_gateway'.
+      The routings will not be deleted if they are removed from this list after a successful update.
+
+    example:
+      routings:
+      - default_gateway: 10.0.32.1
+        interface_name: eth1
+      - default_gateway: 10.0.33.1
+        interface_name: eth2

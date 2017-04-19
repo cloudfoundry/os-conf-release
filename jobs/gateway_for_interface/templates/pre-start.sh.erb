@@ -1,0 +1,78 @@
+#!/bin/bash
+
+set -ex
+
+OS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
+ROUTE_TABLE_CONF_FILE="/etc/iproute2/rt_tables"
+
+#
+# @return 0: exist
+#         1: not exist, need to be followed by a command to avoid exit of the script.
+#
+function insert_if_not_exist {
+  file_path="$1"
+  string="$2"
+
+  num_lines=$(grep "^${string}$" "${file_path}" | wc -l) || num_lines=0
+  if [ ${num_lines} -eq 0 ]; then
+    echo -e "\n${string}" >> "${file_path}"
+    return 1
+  fi
+  return 0
+}
+
+
+<% p('routings').each do |routing_hash| %>
+  <%
+    interface_name   = routing_hash['interface_name']
+    default_gateway  = routing_hash['default_gateway']
+
+    if interface_name.nil? && interface_name.empty?
+      raise "'interface_name' is not configured in routing '#{routing_hash}'"
+    end
+    if default_gateway.nil? || default_gateway.empty?
+      raise "'default_gateway' is not configured in routing '#{routing_hash}'"
+    end
+  %>
+
+  interface_name=<%= interface_name %>
+  default_gateway=<%= default_gateway %>
+
+  route_table_name=${interface_name}
+  rt_lines=$(grep " ${route_table_name}$" ${ROUTE_TABLE_CONF_FILE} | wc -l)
+  if [ ${rt_lines} -eq 0 ]; then
+    id=$(grep -v '^#' ${ROUTE_TABLE_CONF_FILE} |tail -n 1| awk -F' ' '{ print $1}')
+    id=$((id+1))
+    echo -e "${id}  ${route_table_name}" >> ${ROUTE_TABLE_CONF_FILE}
+  fi
+
+  if [[ ${OS} =~ "Ubuntu" ]]; then
+    INTERFACE_CONF_FILE="/etc/network/interfaces"
+    ipaddr=$(/sbin/ifconfig | grep ${interface_name} -A 5 |awk '/inet addr/{print substr($2,6)}')
+    if [ -n "${ipaddr}" ];then
+      insert_if_not_exist ${INTERFACE_CONF_FILE} "post-up ip rule add from ${ipaddr} lookup ${route_table_name}" || \
+        ip rule add from ${ipaddr} lookup ${route_table_name}
+
+      insert_if_not_exist ${INTERFACE_CONF_FILE} "post-up ip route add default via ${default_gateway} dev ${interface_name} table ${route_table_name}" || \
+        ip route add default via ${default_gateway} dev ${interface_name} table ${route_table_name}
+    else
+      echo "Can't find ip address for ${interface_name}"
+      exit 1
+    fi
+  elif [[ ${OS} =~ "CentOS" ]]; then
+    ipaddr=$(/sbin/ifconfig | grep ${interface_name} -A 5 |awk '/inet/{print $2}')
+    if [ -n "${ipaddr}" ];then
+      insert_if_not_exist "/etc/sysconfig/network-scripts/rule-${interface_name}" "from ${ipaddr} table ${route_table_name}" || \
+        ip rule add from ${ipaddr} lookup ${route_table_name}
+
+      insert_if_not_exist "/etc/sysconfig/network-scripts/route-${interface_name}" "default table ${route_table_name} via ${default_gateway}" || \
+        ip route add default via ${default_gateway} dev ${interface_name} table ${route_table_name}
+    else
+      echo "Can't find ip address for ${interface_name}"
+      exit 1
+    fi
+  else
+    echo "Unknown OS ${OS}"
+    exit 1
+  fi
+<% end %>
