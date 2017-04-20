@@ -1,0 +1,32 @@
+#!/bin/bash -ex
+
+# Taken from https://github.com/cloudfoundry/cflinuxfs2-rootfs-release/blob/master/jobs/cflinuxfs2-rootfs-setup/templates/pre-start
+
+CONF_DIR=/var/vcap/jobs/ca_certs/config
+
+echo "deleting old certificates"
+rm -f /usr/local/share/ca-certificates/bosh_os_conf_ca_cert_*
+
+# Split files on '----END CERTIFICATE-----' and increment our file counter by 1
+awk -v n=1 '
+  split_after == 1 {n++;split_after=0}
+  /-----END CERTIFICATE-----/ {split_after=1}
+  NF {print > "/usr/local/share/ca-certificates/bosh_os_conf_ca_cert_" n ".crt"}' < $CONF_DIR/certs.crt
+
+updated_certs=1
+retry_count=0
+max_retry_count=3
+
+set +e
+until [ $updated_certs -eq 0 ] || [ $retry_count -ge $max_retry_count ]; do
+  echo "trying to run update-ca-certificates..."
+  timeout --signal=KILL 60s /usr/sbin/update-ca-certificates -f -v
+  updated_certs=$?
+  retry_count=$((retry_count + 1))
+done
+set -e
+
+if [ $updated_certs -ne 0 ]; then
+  echo "failed to setup ca certificates"
+  exit 1
+fi

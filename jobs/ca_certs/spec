@@ -1,0 +1,18 @@
+---
+name: ca_certs
+
+templates:
+  certs.erb: config/certs.crt
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  certs:
+    description: "Concatenated set of certificates in PEM format"
+    default: ""
+    example: |
+      -----BEGIN CERTIFICATE-----
+      MIIClTCCAf4CCQDc6hJtvGB8RjANBgkqhkiG9w0BAQUFADCBjjELMAk...
+      -----END CERTIFICATE-----
+      -----BEGIN CERTIFICATE-----
+      MIIClTCCAf4CCQDc6hJtvGB8RjANBgkqhkiG9w0BAQUFADCBjjELMAk...
+      -----END CERTIFICATE-----
