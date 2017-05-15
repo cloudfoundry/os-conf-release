@@ -1,0 +1,11 @@
+---
+name: etc_hosts
+
+templates:
+  pre_start.erb: bin/pre-start
+
+packages: []
+
+properties:
+  etc_hosts:
+    description: "/etc/hosts entries"

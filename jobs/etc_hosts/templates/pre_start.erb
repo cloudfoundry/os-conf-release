@@ -1,0 +1,5 @@
+#!/bin/bash -ex
+
+<% p("etc_hosts").each do |entry| %>
+echo "<%= entry %>" >> /etc/hosts
+<% end %>
