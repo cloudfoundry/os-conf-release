@@ -2,6 +2,7 @@ name: os-conf
 version: "12"
 commit_hash: accaecd
 uncommitted_changes: false
+packages: []
 jobs:
 - name: ca_certs
   version: 48424b102b88233b3d7785fba40dc9a41862398d

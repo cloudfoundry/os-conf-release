@@ -2,6 +2,7 @@ name: os-conf
 version: "11"
 commit_hash: "2667e22"
 uncommitted_changes: false
+packages: []
 jobs:
 - name: disable_agent
   version: 7138085404a3442d3d0b6315287d0d9698ff119a
