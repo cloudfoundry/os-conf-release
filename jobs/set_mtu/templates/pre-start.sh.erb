@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -eu
+
+INTERFACE=<%= p('set_mtu.interface') %>
+MTU=<%= p('set_mtu.mtu') %>
+
+DHCP_HOOK=/etc/dhcp/dhclient-exit-hooks.d/set_mtu
+
+# Override MTU setting when DHCP lease is renewed
+cat <<EOF > ${DHCP_HOOK}
+#!/bin/sh
+ifconfig ${INTERFACE} mtu ${MTU}
+EOF
+chmod +x ${DHCP_HOOK}
+
+# Enable new MTU setting now
+${DHCP_HOOK}
