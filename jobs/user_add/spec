@@ -16,6 +16,7 @@ properties:
       users:
       - name: user1
         public_key: ssh-rsa AAAA ...
+        shell: zsh # OPTIONAL: Defaults to `bash`
         sudo: false # OPTIONAL: Defaults to `true`
       - name: user2
         # mkpasswd -m sha-512 <PASSWORD> <SALT>
