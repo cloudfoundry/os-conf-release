@@ -4,6 +4,7 @@ set -ex
 
 <% p('users').each do |user_hash| %>
   <%  user = user_hash['name']
+      sudo = user_hash['sudo'].nil? ? true : !!user_hash['sudo']
       crypted_password = user_hash['crypted_password']
       public_key = user_hash['public_key']
 
@@ -28,9 +29,11 @@ set -ex
   passwd -d <%=user%>
 
   if grep -q 'bosh_sshers' /etc/group; then
-    usermod -G vcap,admin,bosh_sudoers,bosh_sshers <%=user%>
-  else
-    usermod -G vcap,admin,bosh_sudoers <%=user%>
+    <% if sudo %>
+      usermod -G vcap,admin,bosh_sudoers,bosh_sshers <%=user%>
+    <% else %>
+      usermod -G vcap,bosh_sshers <%=user%>
+    <% end %>
   fi
 
   chmod 700 ~<%=user%>
