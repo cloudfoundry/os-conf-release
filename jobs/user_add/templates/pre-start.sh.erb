@@ -4,6 +4,7 @@ set -ex
 
 <% p('users').each do |user_hash| %>
   <%  user = user_hash['name']
+      shell = user_hash['shell']
       crypted_password = user_hash['crypted_password']
       public_key = user_hash['public_key']
 
@@ -24,7 +25,13 @@ set -ex
       end
       %>
 
-  getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%>
+  <% if shell.nil? %> 
+        getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%> 
+   <%  else %>
+       getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%> -s <%=shell%>
+  <%  end %>
+  
+
   passwd -d <%=user%>
 
   if grep -q 'bosh_sshers' /etc/group; then
