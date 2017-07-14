@@ -1,0 +1,16 @@
+---
+name: sysctl
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  sysctl:
+    description: Array of sysctls to be applied; each sysctl should be in the form "sysctlname=value"
+    example:
+    - vm.swappiness=10
+    - net.core.somaxconn=1024
+
+  sysctl_conf_prefix:
+    description: Prefix to be used for the file placed in /etc/sysctl.d. Can be used to change the priority of the applied sysctls
+    default: "71"

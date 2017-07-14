@@ -7,6 +7,7 @@ Enables configuration of the Operating System:
 - enable IPv6 (job: `enable_ipv6`)
 - configure resolv.conf search domain (job: `search_domain`)
 - change TCP keepalive kernel args (job: `tcp_keepalive`)
+- apply arbitrary sysctls (job: `sysctl`)
 
 ## Usage
 
