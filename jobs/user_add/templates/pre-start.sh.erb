@@ -5,7 +5,6 @@ set -ex
 <% p('users').each do |user_hash| %>
   <%  user = user_hash['name']
       sudo = user_hash['sudo'].nil? ? true : !!user_hash['sudo']
-      shell = user_hash['shell'].nil? ? '/bin/bash' : user_hash['shell']
       crypted_password = user_hash['crypted_password']
       public_key = user_hash['public_key']
 
@@ -29,7 +28,9 @@ set -ex
   getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%>
   passwd -d <%=user%>
 
-  usermod -s <%=shell%> <%=user%>
+  <% unless user_hash['shell'].nil? %>
+    usermod -s <%=user_hash['shell']%> <%=user%>
+  <% end %>
 
   if grep -q 'bosh_sshers' /etc/group; then
     <% if sudo %>
