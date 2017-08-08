@@ -30,6 +30,8 @@ instance_groups:
     users:
     - name: small_limits
       crypted_password: "$6$saltsalt$qFmFH.bQmmtXzyBY0s9v7Oicd2z4XSIecDzlB5KiA2/jctKu9YterLp8wwnSq.qc.eoxqOmSuNp2xS0ktL3nh/"
+      shell: /bin/zsh # OPTIONAL: Defaults to `/bin/bash`
+      sudo: false # OPTIONAL: Defaults to `true`
     - name: big_limits
       crypted_password: "$6$saltsalt$qFmFH.bQmmtXzyBY0s9v7Oicd2z4XSIecDzlB5KiA2/jctKu9YterLp8wwnSq.qc.eoxqOmSuNp2xS0ktL3nh/"
 
