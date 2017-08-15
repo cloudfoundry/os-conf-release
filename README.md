@@ -10,6 +10,8 @@ Enables configuration of the Operating System:
 - apply arbitrary sysctls (job: `sysctl`)
 - enable IPv6 (job: `enable_ipv6`)
 
+For a description of these and other functions, see `jobs/`.
+
 ## Usage
 
 Include the release:
@@ -19,6 +21,8 @@ releases:
   name: os-conf
   version: latest
 ```
+
+## Examples 
 
 In this example, we use BOSH's [Runtime Config](https://bosh.io/docs/runtime-config.html) to customize login banner and create two users: first, an _operator_ user with an encrypted password; second, a _backup_ user with an ssh-key:
 
@@ -74,6 +78,4 @@ instance_groups:
       name: enable_ipv6
 ```
 
-##  Examples
-
-See `manifests/` for examples.
+See `manifests/` for more examples.
