@@ -4,10 +4,11 @@ Enables configuration of the Operating System:
 
 - customize login banner text (job: `login_banner`)
 - add UNIX users to VM (job: `user_add`)
-- enable IPv6 (job: `enable_ipv6`)
+- add system wide CA certificates (job: `ca_certs`)
 - configure resolv.conf search domain (job: `search_domain`)
 - change TCP keepalive kernel args (job: `tcp_keepalive`)
 - apply arbitrary sysctls (job: `sysctl`)
+- enable IPv6 (job: `enable_ipv6`)
 
 ## Usage
 
