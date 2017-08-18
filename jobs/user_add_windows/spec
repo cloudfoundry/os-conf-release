@@ -1,0 +1,15 @@
+---
+name: user_add_windows
+
+templates:
+  pre-start.ps1: bin/pre-start.ps1
+
+properties:
+  users:
+    description: |
+      Array of user hashes. Each user should specify a `name` attribute.
+      User will be added to administrators group with a random password
+    example:
+      users:
+      - name: user1
+
