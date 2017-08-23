@@ -28,7 +28,9 @@ set -ex
   getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%>
   passwd -d <%=user%>
 
-  <% unless user_hash['shell'].nil? %>
+  <% if user_hash['shell'].nil? %>
+    usermod -s /bin/bash <%=user%>
+  <% else %>
     usermod -s <%=user_hash['shell']%> <%=user%>
   <% end %>
 
