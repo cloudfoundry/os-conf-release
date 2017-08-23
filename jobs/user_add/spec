@@ -5,6 +5,11 @@ templates:
   pre-start.sh.erb: bin/pre-start
 
 properties:
+  persistent_homes:
+    description: |
+      If set to true, user home directories are created on persistent storage
+      in /var/vcap/store/home.
+    default: false
   users:
     description: |
       Array of user hashes. Each user should specify a `name` attribute, and one of

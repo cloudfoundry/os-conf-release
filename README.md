@@ -36,6 +36,7 @@ addons:
     - name: user_add
       release: os-conf
       properties:
+        persistent_homes: true
         users:
         - name: backup
           public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbss5XtLYRYDeV8AmouVYOHmYPxPsN4F59fZnY4kJnimM3sk5TbP0ow19GMDppQOPzAQ1TcYH4sYhpnxwq5f32XYtw12rFnO8BatHISWIdjoEjHfdA1qLIMGouWZPbGIQ1qURbfJdR9e2shS7U/WSXD+AJ9Zy0ZKTsIvlukWSX8Nsxvfn7VaAFvhgI3YPmhjV3TCEVMDsWGbBXlMq+qiJt22JEOw+3dnrvfGzRUULGznO/8y4NvVQsQc5KGnJkeQWkmlOIrhUGYwd/hMn6zQEIxkR4elmwp+pjyLR0qYLUFjpMn2GJMG7lvTzF8SzQLhzTVrjW1E3nve2eCuJ5bB6/"
