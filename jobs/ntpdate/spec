@@ -1,0 +1,10 @@
+---
+name: ntpdate
+
+templates:
+  pre-start: bin/pre-start
+
+properties:
+  unprivileged_port:
+    description: "Direct ntpdate to use an unprivileged port for outgoing packets."
+    default: false
