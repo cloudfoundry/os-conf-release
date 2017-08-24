@@ -1,0 +1,7 @@
+---
+name: make_audit_rules_immutable
+
+templates:
+  pre-start: bin/pre-start
+
+properties: {}
