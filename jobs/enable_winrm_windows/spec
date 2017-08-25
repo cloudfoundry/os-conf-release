@@ -1,5 +1,5 @@
 ---
-name: enable_winrm
+name: enable_winrm_windows
 templates:
   pre-start.ps1: bin/pre-start.ps1
 
