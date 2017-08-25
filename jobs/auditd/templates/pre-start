@@ -3,3 +3,5 @@
 echo '
 # Make audit rules immutable
 -e 2' >> /etc/audit/rules.d/audit.rules
+
+service auditd restart
