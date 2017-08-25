@@ -2,8 +2,8 @@
 
 if ! grep -e '^-e 2$' /etc/audit/rules.d/audit.rules -q; then
   echo '
-  # Make audit rules immutable
-  -e 2' >> /etc/audit/rules.d/audit.rules
+# Make audit rules immutable
+-e 2' >> /etc/audit/rules.d/audit.rules
 
   service auditd restart
 fi
