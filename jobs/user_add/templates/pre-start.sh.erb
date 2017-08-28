@@ -33,6 +33,7 @@ set -ex
       %>
 
   getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%> --base-dir "$home_dir"
+  chown -R <%=user%>: "$home_dir/<%=user%>"
   passwd -d <%=user%>
 
   <% if user_hash['shell'].nil? %>
