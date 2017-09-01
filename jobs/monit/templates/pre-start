@@ -1,0 +1,38 @@
+#!/bin/bash
+
+<% if p("reload_after_start") %>
+
+echo "`date`: Queued monit reload"
+
+(
+  export PATH=/var/vcap/bosh/bin/:$PATH
+
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+  echo "`date`: Reloading monit..."
+  sleep 60; monit reload
+) &
+
+disown
+
+<% end %>
+
+exit 0

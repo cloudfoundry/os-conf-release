@@ -1,0 +1,10 @@
+---
+name: monit
+
+templates:
+  pre-start: bin/pre-start
+
+properties:
+  reload_after_start:
+    description: "Reload monit to potentially resolve monit flakiness during startup"
+    default: false
