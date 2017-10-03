@@ -2,6 +2,13 @@
 
 set -ex
 
+<% if p('persistent_homes') %>
+  home_dir="/var/vcap/store/home"
+  mkdir -p "$home_dir"
+<% else %>
+  home_dir="/home"
+<% end %>
+
 <% p('users').each do |user_hash| %>
   <%  user = user_hash['name']
       sudo = user_hash['sudo'].nil? ? true : !!user_hash['sudo']
@@ -25,10 +32,13 @@ set -ex
       end
       %>
 
-  getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%>
+  getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%> --base-dir "$home_dir"
+  chown -R <%=user%>: "$home_dir/<%=user%>"
   passwd -d <%=user%>
 
-  <% unless user_hash['shell'].nil? %>
+  <% if user_hash['shell'].nil? %>
+    usermod -s /bin/bash <%=user%>
+  <% else %>
     usermod -s <%=user_hash['shell']%> <%=user%>
   <% end %>
 
