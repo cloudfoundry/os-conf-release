@@ -4,4 +4,7 @@ name: disable_agent
 templates:
   post-start: bin/post-start
 
-properties: {}
+properties:
+  wait_before_killing:
+    description: "Seconds to wait before shutting off the agent"
+    default: 300

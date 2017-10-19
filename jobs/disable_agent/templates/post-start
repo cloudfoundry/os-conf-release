@@ -4,11 +4,12 @@ echo "`date`: Queued disable agent"
 
 (
   echo "`date`: In 60 secs..."
-  sleep 60
+  sleep <%= p("wait_before_killing") %>
   echo "`date`: Killing bosh-agent"
   killall bosh-agent
   echo "`date`: Stopping bosh-agent permanently"
   sv stop agent
+  mv /var/vcap/bosh/bin/bosh-agent{,-os-conf-disabled}
 ) &
 
 disown
