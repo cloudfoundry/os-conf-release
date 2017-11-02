@@ -22,7 +22,7 @@ releases:
   version: latest
 ```
 
-## Examples 
+## Examples
 
 In this example, we use BOSH's [Runtime Config](https://bosh.io/docs/runtime-config.html) to customize login banner and create two users: first, an _operator_ user with an encrypted password; second, a _backup_ user with an ssh-key:
 
@@ -79,4 +79,4 @@ instance_groups:
       name: enable_ipv6
 ```
 
-See `manifests/` for more examples.
+See `manifests/` and `jobs/*/spec` for more examples.
