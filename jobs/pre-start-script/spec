@@ -1,0 +1,11 @@
+name: pre-start-script
+
+templates:
+  pre-start.sh: bin/pre-start
+
+properties:
+  script:
+    description: Script that is run during pre-start to allow additional setup of environment, run as root user.
+    example: |-
+        #!/bin/bash
+        apt-get update && apt-get install wget git tmux -y
