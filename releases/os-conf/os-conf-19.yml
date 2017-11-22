@@ -1,0 +1,61 @@
+name: os-conf
+version: "19"
+commit_hash: 22510c5
+uncommitted_changes: false
+jobs:
+- name: auditd
+  version: 787f2aaf82c9f65cc865dc90ac1f453939405363
+  fingerprint: 787f2aaf82c9f65cc865dc90ac1f453939405363
+  sha1: 7327c82c682a7141ddd217243556ef680f1d625d
+- name: ca_certs
+  version: 48424b102b88233b3d7785fba40dc9a41862398d
+  fingerprint: 48424b102b88233b3d7785fba40dc9a41862398d
+  sha1: 8a8d627ee726c566fde61866bddfbec4e8371c20
+- name: disable_agent
+  version: 1ae7348ec77f0cee4a0958495405956bca655e4a
+  fingerprint: 1ae7348ec77f0cee4a0958495405956bca655e4a
+  sha1: 14d9de71b8a43c622f6f9e972adb566a46af55fb
+- name: enable_ipv6
+  version: 05dbeb548579bc5ff9245cbd91e81c740ea3144c
+  fingerprint: 05dbeb548579bc5ff9245cbd91e81c740ea3144c
+  sha1: 297b818096d5d0a690b5392fe30e4baf247e924c
+- name: limits_not_recommended
+  version: e039b1b7c85c2d9edd13647e405a7ec2ba9b1a66
+  fingerprint: e039b1b7c85c2d9edd13647e405a7ec2ba9b1a66
+  sha1: abab97d7a37c6c92ca0df5159e2ed5cef2c908d5
+- name: login_banner
+  version: 83fdcd1fa5df70c0bda867b3b873f6c4fdf64a90
+  fingerprint: 83fdcd1fa5df70c0bda867b3b873f6c4fdf64a90
+  sha1: 8ca8695fcedfb0ecb9b50cc9fd02a348bc61c153
+- name: monit
+  version: f47966bcc7c0ecc76660ae57132b603a9e203eb6
+  fingerprint: f47966bcc7c0ecc76660ae57132b603a9e203eb6
+  sha1: 720e2d807051d7d7baf16554abd3e8a8354ccf49
+- name: ntpdate
+  version: 01b0faa06a49758112316190cceb2d3e6afe6792
+  fingerprint: 01b0faa06a49758112316190cceb2d3e6afe6792
+  sha1: 9172ac901ab265239b64af89bb6c6b3eac760933
+- name: pre-start-script
+  version: c380cebc1e110542b932157d76b880c8c07c03a2
+  fingerprint: c380cebc1e110542b932157d76b880c8c07c03a2
+  sha1: 96410796b5ff6a6f5adeb1083d5d13de2ec5b7aa
+- name: search_domain
+  version: e6e8b285838d02c2d9c1b8c5df16d7977b0532e8
+  fingerprint: e6e8b285838d02c2d9c1b8c5df16d7977b0532e8
+  sha1: 32a0ee7e7d1e9938abda4708fa6461b49bbc6bec
+- name: sysctl
+  version: d0115e7951d3c221c2e482cc61d45f6dc4ef7fc9
+  fingerprint: d0115e7951d3c221c2e482cc61d45f6dc4ef7fc9
+  sha1: fe67612a6d202dab136eba2867eedf47c6ead1e9
+- name: tcp_keepalive
+  version: f8062f5cb07cb29df43b007948ae05515e69fa2b
+  fingerprint: f8062f5cb07cb29df43b007948ae05515e69fa2b
+  sha1: bba16070c0dc722e3eb7c1aec3dc558d656348fa
+- name: user_add
+  version: 6d89712e022acaee63f7e79fea8b48997cdf0dbf
+  fingerprint: 6d89712e022acaee63f7e79fea8b48997cdf0dbf
+  sha1: 37aa49871b8592424b7dfdb67d70353954f06e69
+license:
+  version: 8ae23dc2d19b33738a229f1f9c92e83701258ec1
+  fingerprint: 8ae23dc2d19b33738a229f1f9c92e83701258ec1
+  sha1: aeacad3d469ac91c31bd59dfe8a357589bee3eb8
