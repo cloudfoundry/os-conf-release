@@ -10,6 +10,8 @@ Enables configuration of a typical Linux OS:
 - apply arbitrary sysctls (job: `sysctl`)
 - enable IPv6 (job: `enable_ipv6`)
 
+See https://github.com/cloudfoundry-incubator/windows-utilities-release for Windows OS configuration.
+
 For a description of these and other functions, see `jobs/`.
 
 ## Usage
