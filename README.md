@@ -1,6 +1,6 @@
-## BOSH Operating System Configuration Release
+## BOSH Linux OS Configuration Release
 
-Enables configuration of the Operating System:
+Enables configuration of a typical Linux OS:
 
 - customize login banner text (job: `login_banner`)
 - add UNIX users to VM (job: `user_add`)
