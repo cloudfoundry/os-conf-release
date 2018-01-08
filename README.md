@@ -76,9 +76,7 @@ instance_groups:
 - name: network-infrastructure
   jobs:
   - name: enable_ipv6
-    templates:
-    - release: os-conf
-      name: enable_ipv6
+    release: os-conf
 ```
 
 See `manifests/` and `jobs/*/spec` for more examples.
