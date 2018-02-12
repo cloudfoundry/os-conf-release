@@ -3,6 +3,8 @@ name: pre-start-script
 templates:
   pre-start.sh: bin/pre-start
 
+packages: []
+
 properties:
   script:
     description: Script that is run during pre-start to allow additional setup of environment, run as root user.
