@@ -2,8 +2,10 @@
 
 set -ex
 
-<% p("resolv.options", []).each do |option| %>
-echo "options <%= @option %>" >> /etc/resolvconf/resolv.conf.d/tail
+sed -i '/^options/d' /etc/resolvconf/resolv.conf.d/tail
+
+<% p("resolv.options").each do | option | %>
+echo "options <%= "#{option}" %>" >> /etc/resolvconf/resolv.conf.d/tail
 <% end %>
 
 /sbin/resolvconf -u
