@@ -4,6 +4,8 @@ name: auditd
 templates:
   pre-start: bin/pre-start
 
+packages: []
+
 properties:
   rules:
     description: Array of auditd rules to add. Note that this job does not update rules after rules are installed for the first time. Removal of a job does not remove rules. For new rules to be applied you must force VM recreation. This behaviour is due to auditd going into its immutable state.
