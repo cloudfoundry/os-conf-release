@@ -4,4 +4,9 @@ name: auditd
 templates:
   pre-start: bin/pre-start
 
-properties: {}
+properties:
+  rules:
+    description: Array of auditd rules to add. Note that this job does not update rules after rules are installed for the first time. Removal of a job does not remove rules. For new rules to be applied you must force VM recreation. This behaviour is due to auditd going into its immutable state.
+    default: []
+    example:
+    - "-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/bin/who -k privileged"

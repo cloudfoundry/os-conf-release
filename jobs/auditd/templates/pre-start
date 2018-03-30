@@ -2,7 +2,14 @@
 
 if ! grep -e '^-e 2$' /etc/audit/rules.d/audit.rules -q; then
   echo '
-# Make audit rules immutable
+# Custom rules; added by auditd job (os-conf-release)
+<% p("rules").each do |rule| %>
+<%= rule %>
+<% end %>
+' >> /etc/audit/rules.d/audit.rules
+
+  echo '
+# Make audit rules immutable; added by auditd job (os-conf-release)
 -e 2' >> /etc/audit/rules.d/audit.rules
 
   service auditd restart
