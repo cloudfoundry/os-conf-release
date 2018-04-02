@@ -7,6 +7,7 @@ templates:
 properties:
   resolv.options:
     description: Set resolv.conf options set
+    default: []
     example:
     - rotate
     - timeout:1
