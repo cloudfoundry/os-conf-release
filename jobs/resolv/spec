@@ -1,0 +1,13 @@
+---
+name: resolv
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  resolv.options:
+    description: Set resolv.conf options set
+    default: []
+    example:
+    - rotate
+    - timeout:1
