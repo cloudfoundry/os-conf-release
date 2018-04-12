@@ -2,7 +2,12 @@
 
 set -ex
 
+sed -i '/^search/d' /etc/resolvconf/resolv.conf.d/tail
 sed -i '/^options/d' /etc/resolvconf/resolv.conf.d/tail
+
+<% if_p("search").each do |domain| %>
+echo "search <%= domain %>" >> /etc/resolvconf/resolv.conf.d/tail
+<% end %>
 
 <% p("resolv.options").each do | option | %>
 echo "options <%= option %>" >> /etc/resolvconf/resolv.conf.d/tail

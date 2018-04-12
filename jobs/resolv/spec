@@ -5,8 +5,12 @@ templates:
   pre-start.sh.erb: bin/pre-start
 
 properties:
-  resolv.options:
-    description: Set resolv.conf options set
+  search:
+    description: Set search domain
+    example: "pivotal.io"
+
+  options:
+    description: Set options set
     default: []
     example:
     - rotate
