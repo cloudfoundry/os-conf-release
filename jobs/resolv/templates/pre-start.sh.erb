@@ -9,7 +9,7 @@ sed -i '/^options/d' /etc/resolvconf/resolv.conf.d/tail
 echo "search <%= domain %>" >> /etc/resolvconf/resolv.conf.d/tail
 <% end %>
 
-<% p("resolv.options").each do | option | %>
+<% p("options").each do | option | %>
 echo "options <%= option %>" >> /etc/resolvconf/resolv.conf.d/tail
 <% end %>
 
