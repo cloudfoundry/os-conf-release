@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+<% p('modules').each do |m| %>
+  modprobe <%= m %>
+<% end %>

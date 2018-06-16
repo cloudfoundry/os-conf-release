@@ -1,0 +1,15 @@
+---
+name: modprobe
+
+templates:
+  pre-start.erb: bin/pre-start
+
+properties:
+  modules:
+    default: []
+    description: List of kernel modules to be loaded (modprobed)
+    example:
+      modules:
+      - aufs
+      - speedstep-lib
+
