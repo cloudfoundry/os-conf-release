@@ -1,0 +1,160 @@
+#!/bin/bash
+
+set -eu
+
+sshd_config="${sshd_config:-/etc/ssh/sshd_config}"
+sshd_init="${sshd_init:-/etc/init.d/ssh}"
+
+changed=false
+
+
+#
+# authorized_principals
+#
+
+dir=/var/vcap/jobs/sshd_settings/etc/authorized_principals
+rm -fr $dir
+
+<% if p('authorized_principals').length > 0 %>
+  mkdir $dir
+
+  <% p('authorized_principals').each do | username, principals | %>
+    echo "<%= principals.join("\n") %>" > $dir/<%= username %>
+  <% end %>
+
+  expected="AuthorizedPrincipalsFile $dir/%u"
+<% else %>
+  expected="#AuthorizedPrincipalsFile /dev/null"
+<% end %>
+
+if ! grep -q "$expected" "$sshd_config"; then
+  echo "overwriting AuthorizedPrincipalsFile"
+  changed=true
+
+  sed -Ei '/^#?AuthorizedPrincipalsFile /d' "$sshd_config"
+  echo "$expected" >> "$sshd_config"
+fi
+
+#
+# disable_authorized_keys
+#
+
+<% if p('disable_authorized_keys') %>
+  expected="AuthorizedKeysFile /dev/null"
+<% else %>
+  expected="#AuthorizedKeysFile %h/.ssh/authorized_keys"
+<% end %>
+
+if ! grep -q "$expected" "$sshd_config"; then
+  echo "overwriting AuthorizedKeysFile"
+  changed=true
+
+  sed -Ei '/^#?AuthorizedKeysFile /d' "$sshd_config"
+  echo "$expected" >> "$sshd_config"
+fi
+
+
+#
+# disable_password_authentication
+#
+
+expected="PasswordAuthentication <%= p('disable_password_authentication') ? 'no' : 'yes' %>"
+
+if ! grep -q "$expected" "$sshd_config"; then
+  echo "overwriting PasswordAuthentication"
+  changed=true
+
+  sed -Ei '/^#?PasswordAuthentication /d' "$sshd_config"
+  echo "$expected" >> "$sshd_config"
+fi
+
+
+#
+# disable_print_last_log
+#
+
+expected="PrintLastLog <%= p('disable_password_authentication') ? 'no' : 'yes' %>"
+
+if ! grep -q "$expected" "$sshd_config"; then
+  echo "overwriting PrintLastLog"
+  changed=true
+
+  sed -Ei '/^#?PrintLastLog /d' "$sshd_config"
+  echo "$expected" >> "$sshd_config"
+fi
+
+
+#
+# log_level
+#
+
+expected="LogLevel <%= p('log_level') %>"
+
+if ! grep -q "$expected" "$sshd_config"; then
+  echo "overwriting LogLevel"
+  changed=true
+
+  sed -Ei '/^#?LogLevel /d' "$sshd_config"
+  echo "$expected" >> "$sshd_config"
+fi
+
+
+#
+# trusted_ca
+#
+
+<% if p('trusted_ca') %>
+  trusted_ca=/var/vcap/jobs/sshd_settings/etc/trusted_ca
+
+  if grep -q -- "-----BEGIN CERTIFICATE-----" $trusted_ca ; then
+    chmod 0644 $trusted_ca
+    ssh-keygen -i -m PKCS8 -f <( openssl x509 -in $trusted_ca -noout -pubkey ) > $trusted_ca-cert.pub
+    trusted_ca=$trusted_ca-cert.pub
+  fi
+
+  expected="TrustedUserCAKeys $trusted_ca"
+<% else %>
+  expected="#TrustedUserCAKeys /dev/null"
+<% end %>
+
+if ! grep -q "$expected" "$sshd_config"; then
+  echo "overwriting TrustedUserCAKeys"
+  changed=true
+
+  sed -Ei '/^#?TrustedUserCAKeys /d' "$sshd_config"
+  echo "$expected" >> "$sshd_config"
+fi
+
+
+#
+# host keys
+#
+
+<% ['rsa', 'dsa', 'ecdsa'].each do |algorithm| if_p("host_key.#{algorithm}") do |key| %>
+  <% if key == '' %>
+    expected="#HostKey /etc/ssh/ssh_host_<%= algorithm %>_key"
+    rm -f /etc/ssh/ssh_host_<%= algorithm %>_key
+  <% else %>
+    expected="HostKey /etc/ssh/ssh_host_<%= algorithm %>_key # ssh-conf"
+    cat > /etc/ssh/ssh_host_<%= algorithm %>_key <<EOF
+<%= key %>
+EOF
+  <% end %>
+
+  if ! grep -q "$expected" "$sshd_config"; then
+    echo "overwriting HostKey <%= algorithm %>"
+    changed=true
+
+    sed -Ei '\@^#?HostKey /etc/ssh/ssh_host_<%= algorithm %>_key@d' "$sshd_config"
+    echo "$expected" >> "$sshd_config"
+  fi
+<% end ; end %>
+
+
+#
+# restart
+#
+
+if [[ "$changed" == "true" ]]; then
+  /etc/init.d/ssh restart
+fi
