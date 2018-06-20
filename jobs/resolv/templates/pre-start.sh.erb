@@ -5,7 +5,7 @@ set -ex
 sed -i '/^search/d' /etc/resolvconf/resolv.conf.d/tail
 sed -i '/^options/d' /etc/resolvconf/resolv.conf.d/tail
 
-<% if_p("search").each do |domain| %>
+<% if_p("search") do |domain| %>
 echo "search <%= domain %>" >> /etc/resolvconf/resolv.conf.d/tail
 <% end %>
 

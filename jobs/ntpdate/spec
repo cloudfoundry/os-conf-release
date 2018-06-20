@@ -2,7 +2,7 @@
 name: ntpdate
 
 templates:
-  pre-start: bin/pre-start
+  pre-start.erb: bin/pre-start
 
 properties:
   unprivileged_port:

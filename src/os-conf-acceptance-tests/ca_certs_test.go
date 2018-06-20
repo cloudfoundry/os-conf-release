@@ -1,0 +1,85 @@
+package os_conf_acceptance_tests_test
+
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gexec"
+)
+
+var caCertificate1 = `BEGIN CERTIFICATE-----
+MIIE5DCCAsygAwIBAgIBATANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDEwdUZXN0
+Q0ExMB4XDTE4MDYxODIzMTIxM1oXDTE5MTIxODIzMTIxM1owEjEQMA4GA1UEAxMH
+VGVzdENBMTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANUUnwvzxNeR
+A8W3ucY9Rxt+tpWKINenlXYdC+G5/sFzIXfZGIbVneSgQvt1RKsDhNiaHwjfTazg
+9e8/Mu433T2DPkkYTVZfOCUA02Sy6MASM9LvHFdYPdntLwUppsaYGlO6zfoulLZQ
+08UzLx+eQj7hieBM95qG8k9S/lESiOKdStx+hw6ofHELniPc2uu1NhiDU2Ol/jM7
+a1wjxVGygSQwB8Cw5vpoXjmOr8x0vT9ujOvHCWTZi4ZgoxKIBboSnoDVaUCm0QIv
+83NqxvR+5jmxcqDNStbTZNlUgYZbO2KSlaEJPcEKNXHQlXlwkCJCnO8v78jdgH/m
+Vcg+op1OBaGDVQ8fpkMCJfs1LTVsedxuife3rhwfihbNC+hExhrqaXK2+CZPdVs3
+tOFgcagGBUSPtMxIwgiRl+OIwPuL5+HpHbbzUU1/rjoHLxCYIIrAgi27OxXp3fmW
+3++5ueYFk/oMw9GKA7kEEwjDIgo363v7DWXjYwXdOg8AB1uG1UrO3KxW8eSlCTdS
+TrnupZUbCmj6N2CbxxI7hTwpuXcrD8tCuJgqEOIviqLXyh9dmreukWKCK0S0b3SD
+5jO43+jlFmjA53ghlYFkgnBb689BPYk6qCCTllI3v9RJ/aM/O73VHzFSqCdJ/tmd
+cr4sWbjDNBNC/jg74ls3oHLDg5jO9OQtAgMBAAGjRTBDMA4GA1UdDwEB/wQEAwIB
+BjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBSpoT+/4AMWPEBl6Irb8685
+sn9NsjANBgkqhkiG9w0BAQsFAAOCAgEABqRV+aGW5jVgaZorXof3symuaYtHRO5t
+SJR1iNhdpRek84MwgZMz4eUyI1m7QMiJWA+rv+eDGWPfc59V4jcHcqDbu7bmy3Am
+nJkyl4v0cToOHAwqcrnjAxc1PlQs8TEcLP9NzqMc2YOpDIO6yUMDQTjS1JrPjIyf
+E2xAJmXsg8V7AmORk4az7y4sPNESrfGTIIzE/LBXq7gOxCu9+j/8XcZFRzNW6LNL
+MhGnd10Q7MdJ21LT5D6S75KTR0bf0fvbTEg9+AEeeiKrTe2CgZqQusj3EGa0RopO
+wCVyK1ZPoMGx4HjDYORx1VWWfuEU4bcD23vwTCjmOje3Yk5fTL1gHI1+HuKxjAPV
+WpyCmoBUc9AgUWr1wc8ynX7Ly4dttd7hw4c8/pRczP1/S3mFvYt+ov6kYyBUabQt
+jLkQlRf9FFdiZpve6pLIqEjkk1nwxfGyePWdFRJaItW7J6SfBAVmPoiOoQkretkN
+5tqcfeKUedZed4f5pBGZUYD5zB4aOJjLzxO7mkzyNM44kPqsIf7xybFY5Hdky+RQ
+bBqvIYMsM79stWeTvjyDRr0jwVRwlRLO7mvdFPc6QCYNrZ+yl/77jiezwgWQubPe
+T2eYROwu4pgBkIxT2dPMX82jKDhJyEv55YRIVcj0R0VzXCf4bfKRdXtXL1NLcMoX
+Roei2GNKB/U=
+-----END CERTIFICATE-----`
+
+var caCertificate2 = `BEGIN CERTIFICATE-----
+MIIE5DCCAsygAwIBAgIBATANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDEwdUZXN0
+Q0EyMB4XDTE4MDYxODIzMTIxOVoXDTE5MTIxODIzMTIxOVowEjEQMA4GA1UEAxMH
+VGVzdENBMjCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAL4b8IvI/YC3
+6zjad7vhvMATgd9PmgkdX1SrT1dgECeeHwIGK/PUwgBqQcUDfTqsykGDoQsn0AXG
+VE7PieJ//JysXnpMHSFm+yvtUVLU71YsIk3aMUjjVf4X0TnNjaQp1hqAtnzAzCff
+lznLnirzhKkaGR8LvtaTdkvTRFoPGDAt67mvcQ9QjuAv4LQe5xLBu3XQVJod5HnN
+X548VHZXzRqR5i2/D7avBUwZkazsEWAJtnxFMoHMUP4+lOL+NAwwWxyD6yS4MLMK
+vl7T18KwJ4SrPPbV9hjjYl58Y0arhD2peTgd18f7c2hHBCojFEyILFwQbOVG7gVt
+/v3mp8hE8Zo0cwiN4RAGyg4/fZzYeMGKJyzalVpP7Ev12BO107UtPyqJ8Mg99X5N
+FQCc73CnvkKpavWTx/1NTOXYv8YjV3PG86vCPQUEe+qPlztLp8I1CfZ5+4fvXFyY
+89m7gQE4fjS+SZRyii0Jd+wJ3wVsk9G0PBHjEZY7QcfnCU3kOjZrKp6F6Vnn6l+U
+9uE/07Cei0r1kaE/hx+UN+COO5hZToJnRbXHNYZuwWLYcIJU6NJXbe64XxN/KXzN
+sZVjPfbESHn4jOUPxgpqFF/d/VB/qfXXw10xY1l9vn1WHHucqpDPYMl5P/yzonj3
+jDxb6WpLvqLaPOwYDmQTiTP8lMTHM6fXAgMBAAGjRTBDMA4GA1UdDwEB/wQEAwIB
+BjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBRXjzd0CWfGUyFJEl3qtxB5
+dw2uHDANBgkqhkiG9w0BAQsFAAOCAgEATJrEC1AtwkbdJYCWZfoznkYZtnlxRGel
+n7Sf6vXpOC7iQ/GGU5wrkYWpz7YEyVtEhlYB2/9cgRXwJKbSM43yPPW+JYK4Qi/5
+ljHZiFUx6R1xvANk1+OheRbmenD3dKGzGADrbRFedEqG35/L3TTW289dZZvhEOxo
+Z2GoI3WiZVmM6f4s0TEyTVRMS7CkyN0NPmm6Nlv6xjruvzaB4HMugDj4jrEvvKyC
+7uURRUsfRYZgpvNyvaZ2fJDUOWOu08WRn4DgPCSWc57bMZMcfY20UKKCaTQ1Cmi0
+tc0J3DQLpeAjFKBNneQGBj1pzsKvbp/+E/ObM67qJChDcty2HVkkAT3DTLp881BB
+SKkBwpw0tnpjVv5FkzFwDdbxiHVwbVEKmrnbawgjGTfaR+h3Vqc23lTuf5voHrSz
+aOmkt1i3y9ywnjKH3vfNPmOApAF99U6wd6PbqTiplziwcgtAtIlfuLlyggXEAlx7
+AmrPRJUvuNWr8inS7ojKqsRFuQenmz0M3dNVpMvTQRxsnGPaEp5TaoVr9x4ntjtD
+d6mtYqY4qXSSEWF4nUu7BVHV3wgLvBOgvTnLMR18vakF03x2JD4Vx9sxHyqXNo4V
+AUHr4fJ43qurkZx5FKJcYjpyh+gYou8QGfn/F23O9dlJMrrvGKF4ZruJtIa+uvIA
+mnvqfMDS/A8=
+-----END CERTIFICATE-----`
+
+var _ = Describe("CACerts", func() {
+	It("allows users to add ca certificates", func() {
+		checkForCaCert(caCertificate1)
+		checkForCaCert(caCertificate2)
+	})
+})
+
+func checkForCaCert(cert string) {
+	escapedCert := strings.Replace(cert, "\n", "\\n", -1)
+	escapedCert = strings.Replace(escapedCert, "+", "\\+", -1)
+	session := boshSSH("os-conf/0", fmt.Sprintf(`sudo grep -Pzo "%s" /etc/ssl/certs/ca-certificates.crt`, escapedCert))
+	Eventually(session, 30*time.Second).Should(gexec.Exit(0))
+}

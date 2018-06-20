@@ -1,0 +1,12 @@
+[[constraint]]
+  name = "github.com/onsi/ginkgo"
+  version = "1.5.0"
+
+[[constraint]]
+  name = "github.com/onsi/gomega"
+  version = "1.4.0"
+
+[prune]
+  non-go = true
+  go-tests = true
+  unused-packages = true

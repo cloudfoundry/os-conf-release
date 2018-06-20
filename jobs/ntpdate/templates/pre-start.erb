@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+<% if p("unprivileged_port") %>
+if [[ -f "/var/vcap/bosh/bin/ntpdate" ]]; then
+  sed -i 's~/usr/sbin/ntpdate \$~/usr/sbin/ntpdate -u $~' /var/vcap/bosh/bin/ntpdate
+fi
+
+if [[ -f "/var/vcap/bosh/bin/sync-time" ]]; then
+  sed -i 's~/usr/sbin/ntpdate \$~/usr/sbin/ntpdate -u $~' /var/vcap/bosh/bin/sync-time
+fi
+<% end %>
