@@ -19,9 +19,9 @@ resources:
 - name: bbl-state
   type: bbl-state-resource
   source:
-    bucket: bbl-state
+    bucket: os-conf-release-bbl-state
     iaas: gcp
-    gcp_region: us-east-1
+    gcp_region: us-west1
     gcp_service_account_key: ((bbl_gcp_service_account_key))
 - name: ubuntu-trusty-stemcell
   type: bosh-io-stemcell
@@ -36,32 +36,32 @@ jobs:
 - name: os-conf-release-acceptance-tests
   plan:
   - aggregate:
-    - get: bbl-state
     - get: os-conf-release
       trigger: true
     - get: ubuntu-trusty-stemcell
       trigger: true
     - get: ubuntu-xenial-stemcell
       trigger: true
-  - put: bbl-state
-    params:
-      command: up
-  - task: run-ubuntu-trusty-os-conf-acceptance-tests
-    file: os-conf-release/ci/tasks/run-acceptance-tests.yml
-    params:
-      BOSH_STEMCELL: ubuntu-trusty
-      BOSH_DEPLOYMENT: os-conf-trusty
-    input_mapping:
-      stemcell: ubuntu-trusty-stemcell
-  - task: run-ubuntu-xenial-os-conf-acceptance-tests
-    file: os-conf-release/ci/tasks/run-acceptance-tests.yml
-    params:
-      BOSH_STEMCELL: ubuntu-xenial
-      BOSH_DEPLOYMENT: os-conf-xenial
-    input_mapping:
-      stemcell: ubuntu-xenial-stemcell
-  ensure:
-  - put: bbl-state
-    params:
-      command: down
-      state_dir: bbl-state
+  - do:
+    - put: bbl-state
+      params:
+        command: up
+    - task: run-ubuntu-trusty-os-conf-acceptance-tests
+      file: os-conf-release/ci/tasks/run-acceptance-tests.yml
+      params:
+        BOSH_STEMCELL: ubuntu-trusty
+        BOSH_DEPLOYMENT: os-conf-trusty
+      input_mapping:
+        stemcell: ubuntu-trusty-stemcell
+    - task: run-ubuntu-xenial-os-conf-acceptance-tests
+      file: os-conf-release/ci/tasks/run-acceptance-tests.yml
+      params:
+        BOSH_STEMCELL: ubuntu-xenial
+        BOSH_DEPLOYMENT: os-conf-xenial
+      input_mapping:
+        stemcell: ubuntu-xenial-stemcell
+    ensure:
+      put: bbl-state
+      params:
+        command: down
+        state_dir: bbl-state
