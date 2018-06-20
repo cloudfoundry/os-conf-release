@@ -63,6 +63,8 @@ func deployOSConfDeployment() {
 		"assets/manifest.yml",
 		"-v",
 		fmt.Sprintf("stemcell_os=%s", boshStemcell),
+		"-v",
+		fmt.Sprintf("deployment_name=%s", deploymentName),
 	)
 
 	session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)

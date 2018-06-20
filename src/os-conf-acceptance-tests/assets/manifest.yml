@@ -1,5 +1,5 @@
 ---
-name: os-conf
+name: ((deployment_name))
 
 instance_groups:
 - name: os-conf

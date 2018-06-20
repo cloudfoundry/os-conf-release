@@ -1,0 +1,67 @@
+---
+groups:
+- name: os-conf-release
+  jobs:
+  - os-conf-release-acceptance-tests
+
+resource_types:
+- name: bbl-state-resource
+  type: docker-image
+  source:
+    repository: cfinfrastructure/bbl-state-resource
+
+resources:
+- name: os-conf-release
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/os-conf-release.git
+    branch: master
+- name: bbl-state
+  type: bbl-state-resource
+  source:
+    bucket: bbl-state
+    iaas: gcp
+    gcp_region: us-east-1
+    gcp_service_account_key: ((bbl_gcp_service_account_key))
+- name: ubuntu-trusty-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-trusty-go_agent
+- name: ubuntu-xenial-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-xenial-go_agent
+
+jobs:
+- name: os-conf-release-acceptance-tests
+  plan:
+  - aggregate:
+    - get: bbl-state
+    - get: os-conf-release
+      trigger: true
+    - get: ubuntu-trusty-stemcell
+      trigger: true
+    - get: ubuntu-xenial-stemcell
+      trigger: true
+  - put: bbl-state
+    params:
+      command: up
+  - task: run-ubuntu-trusty-os-conf-acceptance-tests
+    file: os-conf-release/ci/tasks/run-acceptance-tests.yml
+    params:
+      BOSH_STEMCELL: ubuntu-trusty
+      BOSH_DEPLOYMENT: os-conf-trusty
+    input_mapping:
+      stemcell: ubuntu-trusty-stemcell
+  - task: run-ubuntu-xenial-os-conf-acceptance-tests
+    file: os-conf-release/ci/tasks/run-acceptance-tests.yml
+    params:
+      BOSH_STEMCELL: ubuntu-xenial
+      BOSH_DEPLOYMENT: os-conf-xenial
+    input_mapping:
+      stemcell: ubuntu-xenial-stemcell
+  ensure:
+  - put: bbl-state
+    params:
+      command: down
+      state_dir: bbl-state
