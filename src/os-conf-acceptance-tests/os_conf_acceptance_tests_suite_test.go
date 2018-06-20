@@ -15,6 +15,7 @@ import (
 var (
 	boshBinaryPath string
 	deploymentName string
+	boshStemcell   string
 )
 
 func TestOsConfAcceptanceTests(t *testing.T) {
@@ -23,8 +24,13 @@ func TestOsConfAcceptanceTests(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
+	var found bool
 	boshBinaryPath = assertEnvExists("BOSH_BINARY_PATH")
 	deploymentName = assertEnvExists("BOSH_DEPLOYMENT")
+	boshStemcell, found = os.LookupEnv("BOSH_STEMCELL")
+	if !found {
+		boshStemcell = "ubuntu-trusty"
+	}
 
 	assertEnvExists("BOSH_CLIENT")
 	assertEnvExists("BOSH_CLIENT_SECRET")
@@ -55,6 +61,8 @@ func deployOSConfDeployment() {
 		deploymentName,
 		"deploy",
 		"assets/manifest.yml",
+		"-v",
+		fmt.Sprintf("stemcell_os=%s", boshStemcell),
 	)
 
 	session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)

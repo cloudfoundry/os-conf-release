@@ -169,5 +169,5 @@ update:
 
 stemcells:
 - alias: default
-  os: ubuntu-trusty
+  os: ((stemcell_os))
   version: latest
