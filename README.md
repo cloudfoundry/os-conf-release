@@ -5,7 +5,7 @@ Enables configuration of a typical Linux OS:
 - customize login banner text (job: `login_banner`)
 - add UNIX users to VM (job: `user_add`)
 - add system wide CA certificates (job: `ca_certs`)
-- configure resolv.conf search domain (job: `search_domain`)
+- configure resolv.conf search domain (job: `resolv`)
 - change TCP keepalive kernel args (job: `tcp_keepalive`)
 - apply arbitrary sysctls (job: `sysctl`)
 - enable IPv6 (job: `enable_ipv6`)
@@ -63,10 +63,10 @@ instance_groups:
         time:     120
         interval:  30
         probes:     8
-  - name: search_domain
+  - name: resolv
     release: os-conf
     properties:
-      search_domain: pivotal.io
+      search: pivotal.io
 ```
 
 In this example, we enable the IPv6 protocol (note: there are no properties for the `enable_ipv6` job):
