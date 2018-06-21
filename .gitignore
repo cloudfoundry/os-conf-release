@@ -15,4 +15,5 @@ blobs
 *#
 #*
 pkg
+bin
 *.tgz

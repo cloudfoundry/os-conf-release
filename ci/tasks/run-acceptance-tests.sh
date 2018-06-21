@@ -26,6 +26,6 @@ bosh upload-release release.tgz
 export BOSH_BINARY_PATH=/usr/bin/bosh
 
 pushd "${PWD}/os-conf-release/src/os-conf-acceptance-tests"
-  go install vendor/github.com/onsi/ginkgo/gingko
+  go install ./vendor/github.com/onsi/ginkgo/gingko
   ginkgo -v
 popd
