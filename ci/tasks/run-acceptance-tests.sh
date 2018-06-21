@@ -13,8 +13,8 @@ curl -fSL https://github.com/cloudfoundry/bosh-bootloader/releases/download/v${B
 
 eval "$(bbl --state-dir "${PWD}/bbl-state" print-env)"
 
-BOSH_VERSION=4.0.1
-BOSH_SHA=0045668aa6582ddd518cfb2b6134eba439bbb94d
+BOSH_VERSION=3.0.1
+BOSH_SHA=ccc893bab8b219e9e4a628ed044ebca6c6de9ca0
 curl -fSL https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-${BOSH_VERSION}-linux-amd64 -o /usr/bin/bosh \
   && echo "$BOSH_SHA  /usr/bin/bosh" | shasum -c - \
   && chmod +x /usr/bin/bosh
