@@ -17,9 +17,15 @@ var _ = Describe("TCPKeepAlive", func() {
 		Eventually(session, 30*time.Second).Should(gbytes.Say("net.ipv4.tcp_keepalive_probes=12"))
 		Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 
-		session = boshSSH("os-conf/0", "sudo sysctl -a")
+		session = boshSSH("os-conf/0", "sudo sysctl net.ipv4.tcp_keepalive_time")
 		Eventually(session, 30*time.Second).Should(gbytes.Say("net.ipv4.tcp_keepalive_time = 10"))
+		Eventually(session, 30*time.Second).Should(gexec.Exit(0))
+
+		session = boshSSH("os-conf/0", "sudo sysctl net.ipv4.tcp_keepalive_intvl")
 		Eventually(session, 30*time.Second).Should(gbytes.Say("net.ipv4.tcp_keepalive_intvl = 11"))
+		Eventually(session, 30*time.Second).Should(gexec.Exit(0))
+
+		session = boshSSH("os-conf/0", "sudo sysctl net.ipv4.tcp_keepalive_probes")
 		Eventually(session, 30*time.Second).Should(gbytes.Say("net.ipv4.tcp_keepalive_probes = 12"))
 		Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 	})
