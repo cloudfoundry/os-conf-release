@@ -6,7 +6,7 @@ export GOPATH="${PWD}/os-conf-release"
 export PATH="${GOPATH}/bin:$PATH"
 
 apt-get update
-apt-get install -y netcat
+apt-get install -y netcat-openbsd
 
 BBL_VERSION=6.7.10
 BBL_SHA=53bd673f2967b5b82a3db4862c823230f55fe7d2f57bcec8241318e4ba9d8e60
