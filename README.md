@@ -8,7 +8,6 @@ Enables configuration of a typical Linux OS:
 - configure resolv.conf search domain (job: `resolv`)
 - change TCP keepalive kernel args (job: `tcp_keepalive`)
 - apply arbitrary sysctls (job: `sysctl`)
-- enable IPv6 (job: `enable_ipv6`)
 
 See https://github.com/cloudfoundry-incubator/windows-utilities-release for Windows OS configuration.
 
@@ -67,16 +66,6 @@ instance_groups:
     release: os-conf
     properties:
       search: pivotal.io
-```
-
-In this example, we enable the IPv6 protocol (note: there are no properties for the `enable_ipv6` job):
-
-```
-instance_groups:
-- name: network-infrastructure
-  jobs:
-  - name: enable_ipv6
-    release: os-conf
 ```
 
 See `manifests/` and `jobs/*/spec` for more examples.
