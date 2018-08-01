@@ -13,8 +13,8 @@ var _ = Describe("UserAdd", func() {
 	It("allows users to add users to the VM", func() {
 		By("adding the users to /etc/passwd", func() {
 			session := boshSSH("os-conf/0", "sudo cat /etc/passwd")
-			Eventually(session, 30*time.Second).Should(gbytes.Say("test-user-password:x:1006:1009::/home/test-user-password:/bin/rbash"))
-			Eventually(session, 30*time.Second).Should(gbytes.Say("test-user-key:x:1007:1010::/home/test-user-key:/bin/bash"))
+			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-password:x:\d+:\d+::/home/test-user-password:/bin/rbash`))
+			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-key:x:\d+:\d+::/home/test-user-key:/bin/bash`))
 			Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 		})
 
