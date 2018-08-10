@@ -3,6 +3,7 @@ groups:
 - name: os-conf-release
   jobs:
   - os-conf-release-acceptance-tests
+  - finalize-release
 
 resource_types:
 - name: bbl-state-resource
@@ -10,12 +11,18 @@ resource_types:
   source:
     repository: cfinfrastructure/bbl-state-resource
 
+- name: bosh-release-resource
+  type: docker-image
+  source:
+    repository: dpb587/bosh-release-resource
+
 resources:
 - name: os-conf-release
   type: git
   source:
     uri: https://github.com/cloudfoundry/os-conf-release.git
     branch: master
+
 - name: bbl-state
   type: bbl-state-resource
   source:
@@ -23,14 +30,34 @@ resources:
     iaas: gcp
     gcp_region: us-west1
     gcp_service_account_key: ((bbl_gcp_service_account_key))
+
 - name: ubuntu-trusty-stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-ubuntu-trusty-go_agent
+
 - name: ubuntu-xenial-stemcell
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-ubuntu-xenial-go_agent
+
+- name: os-conf-bosh-release
+  type: bosh-release-resource
+  source:
+    uri: git@github.com:cloudfoundry/os-conf-release
+    branch: master
+    private_config: ((os-conf-private-config))
+    private_key: ((os-conf-private-key))
+
+- name: os-conf-version
+  type: semver
+  source:
+    driver: s3
+    bucket: os-conf-version
+    key: current-version
+    initial_version: 20.0.0
+    access_key_id: ((os-conf-version-access-key-id))
+    secret_access_key: ((os-conf-version-secret-access-key))
 
 jobs:
 - name: os-conf-release-acceptance-tests
@@ -65,3 +92,20 @@ jobs:
       params:
         command: down
         state_dir: bbl-state
+
+- name: finalize-release
+  plan:
+    - aggregate:
+      - get: os-conf-release
+        passed: [os-conf-release-acceptance-tests]
+      - get: os-conf-version
+    - put: os-conf-bosh-release
+      params:
+        repository: os-conf-release
+        version: os-conf-version/version
+        author_name: CF BOSH
+        author_email: pivotal-sf-bosh@pivotal.io
+        rebase: true
+    - put: os-conf-version
+      params:
+        bump: major
