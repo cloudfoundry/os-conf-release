@@ -1,1 +1,4 @@
 <%= p("certs", "") %>
+<% p("cert_list", []).each do |cert| %>
+<%= cert %>
+<% end %>
