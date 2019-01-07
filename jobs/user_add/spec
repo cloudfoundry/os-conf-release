@@ -21,6 +21,7 @@ properties:
       users:
       - name: user1
         public_key: ssh-rsa AAAA ...
+        groups: [ group1 ]
       - name: user2
         # mkpasswd -m sha-512 <PASSWORD> <SALT>
         crypted_password: $6$saltysalt$eF06vmEKaMhOr8jcnyfJJGuaU/Khq3DpH4M/7T.ziGNjhEEv3o9tgaX5VciMGAbgfE0CH9XrcpHi9kgmVv1Z2.
@@ -28,3 +29,4 @@ properties:
         shell: /bin/rbash
       - name: nosudo
         sudo: false
+        groups: []
