@@ -79,6 +79,12 @@ instance_groups:
       limits_conf: |
         * soft nofile 60000
         * hard nofile 100000
+  - name: limits
+    release: os-conf
+    properties:
+      nofile:
+        soft: 60000
+        hard: 100000
   - name: login_banner
     release: os-conf
     properties:
