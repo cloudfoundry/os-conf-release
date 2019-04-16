@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -ex
+
+if pidof systemd >/dev/null 2>&1; then
+  NEW_NOFILE="DefaultLimitNOFILE=<%= p("nofile.soft") %>:<%= p("nofile.hard") %>"
+  LINE=$(grep -nE '^DefaultLimitNOFILE=' /etc/systemd/system.conf | tail -1 | awk -F: '{print $1}')
+  if [[ -n "$LINE" ]]; then
+    sed -i "${LINE}s/.*/$NEW_NOFILE/" /etc/systemd/system.conf
+  else
+    echo "$NEW_NOFILE" >> /etc/systemd/system.conf
+  fi
+  systemctl daemon-reload
+else
+  >&2 echo "Failed to update systemd configuration because systemd is not running"
+fi
+
+pid=$(pgrep monit | awk '{print $1}')
+
+if command -v prlimit >/dev/null 2>&1; then
+  while [[ $pid -gt 1 ]]; do
+    prlimit --pid "$pid" --nofile=<%= p("nofile.soft") %>:<%= p("nofile.hard") %>
+    pid=$(ps -o ppid:1= -p "$pid")
+  done
+else
+  >&2 echo "Failed to set limits because command 'prlimit' is not available"
+fi

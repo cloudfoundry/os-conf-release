@@ -1,0 +1,18 @@
+---
+name: limits
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  nofile.soft:
+    description: |
+      Modifies the soft max number of open files. Linux defaults to 1024.
+    example: 16384
+    default: 16384
+  nofile.hard:
+    description: |
+      Modifies the hard max number of open files. Linux defaults to 4096.
+      It needs to be greater or equal to the soft limit
+    example: 16384
+    default: 16384
