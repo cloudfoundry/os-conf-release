@@ -7,6 +7,7 @@ templates:
 properties:
   sysctl:
     description: Array of sysctls to be applied; each sysctl should be in the form "sysctlname=value"
+    default: []
     example:
     - vm.swappiness=10
     - net.core.somaxconn=1024
