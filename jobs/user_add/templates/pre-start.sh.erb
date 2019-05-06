@@ -19,10 +19,6 @@ set -ex
         raise "User must be configured with a 'name' attribute. '#{user_hash}'"
       end
 
-      if !crypted_password.nil? && !public_key.nil?
-        raise "User: '#{user}' is configured with both 'crypted_password' and 'public_key'. Choose one."
-      end
-
       if crypted_password.nil? && public_key.nil?
         raise "User: '#{user}' must contain one of 'crypted_password' or 'public_key' key/values."
       end
@@ -58,7 +54,9 @@ set -ex
 
   <% if !crypted_password.nil? %>
     echo '<%=user%>:<%=crypted_password%>' | chpasswd -e
-  <% elsif !public_key.nil?  %>
+  <% end %>
+
+  <% if !public_key.nil?  %>
     echo '<%=public_key%>' > ~<%=user%>/.ssh/authorized_keys
     chmod 600 ~<%=user%>/.ssh/authorized_keys
     chown -R <%=user%> ~<%=user%>/.ssh
