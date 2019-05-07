@@ -41,10 +41,6 @@ var _ = Describe("UserAdd", func() {
 			session := boshSSH("os-conf/0", "sudo cat /home/test-user-key-and-password/.ssh/authorized_keys")
 			Eventually(session, 30*time.Second).Should(gbytes.Say("test-user-public-key"))
 			Eventually(session, 30*time.Second).Should(gexec.Exit(0))
-
-			session = boshSSH("os-conf/0", "sudo ls -larth /home/test-user-key-and-password/.ssh")
-			Consistently(session, 10*time.Second).ShouldNot(gbytes.Say("authorized_keys"))
-			Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 		})
 
 		By("adding them to the bosh_sshers group", func() {
