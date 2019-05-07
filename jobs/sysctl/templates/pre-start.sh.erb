@@ -52,10 +52,9 @@ parse_conf_files() {
 
             if [[ -n ${param_files[$param]-} && ${param_values[$param]-} != $value ]]; then
                 echo "ERROR: There is a conflict in parameter values / module options" >&2
-                (
-                    echo -e "${param_files[$param]}:\t$param $delim ${param_values[$param]}" >&2
-                    echo -e "$conf_file:\t$param $delim $value" >&2
-                ) | column -ts$'\t'
+                {   echo -e "${param_files[$param]}:\t$param $delim ${param_values[$param]}"
+                    echo -e "$conf_file:\t$param $delim $value"
+                } | column -ts$'\t' >&2
                 conflict=true
             else
                 param_files[$param]=$conf_file
