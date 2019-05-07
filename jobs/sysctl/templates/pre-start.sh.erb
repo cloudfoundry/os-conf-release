@@ -47,8 +47,8 @@ parse_conf_files() {
         while IFS=$delim read -r param value; do
             [[ -z $param ]] && continue
 
-            param=$(trim_spaces <<< $param)
-            value=$(trim_spaces <<< $value)
+            param=$(trim_spaces <<< "$param")
+            value=$(trim_spaces <<< "$value")
 
             if [[ -n ${param_files[$param]-} && ${param_values[$param]-} != $value ]]; then
                 echo "ERROR: There is a conflict in parameter values / module options" >&2
