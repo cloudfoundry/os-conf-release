@@ -19,6 +19,20 @@ remove_empty_lines() {
 
 # Parse config files, generate list of job level settings / modules and echo the result
 # Return 1 if conflicted values / options are found
+#
+# From man 5 sysctl.conf:
+#  sysctl.conf is a simple file containing sysctl values to be read in and set
+#  by sysctl. The syntax is simply as follows:
+#
+#    # comment
+#    ; comment
+#
+#    token = value
+#
+#    Note that blank lines are ignored, and whitespace before and after a token
+#    or value is ignored, although a value can contain whitespace within. Lines
+#    which begin with a # or ; are considered comments and ignored.
+#
 parse_conf_files() {
     local conf_path=$1
     local delim=$2
