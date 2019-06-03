@@ -7,12 +7,12 @@ groups:
 
 resource_types:
 - name: bbl-state-resource
-  type: docker-image
+  type: registry-image
   source:
     repository: cfinfrastructure/bbl-state-resource
 
 - name: bosh-release-resource
-  type: docker-image
+  type: registry-image
   source:
     repository: dpb587/bosh-release-resource
 
