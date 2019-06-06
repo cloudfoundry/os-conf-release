@@ -1,0 +1,13 @@
+name: post-start-script
+
+templates:
+  post-start.sh: bin/post-start
+
+packages: []
+
+properties:
+  script:
+    description: Script that is run during post-start to allow additional setup of environment, run as root user.
+    example: |-
+        #!/bin/bash
+        apt-get update && apt-get install wget git tmux -y
