@@ -15,6 +15,7 @@ var _ = Describe("UserAdd", func() {
 			session := boshSSH("os-conf/0", "sudo cat /etc/passwd")
 			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-password:x:\d+:\d+::/home/test-user-password:/bin/rbash`))
 			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-key:x:\d+:\d+::/home/test-user-key:/bin/bash`))
+			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-key-and-password:x:\d+:\d+::/home/test-user-key-and-password:/bin/rbash`))
 			Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 		})
 
@@ -22,6 +23,7 @@ var _ = Describe("UserAdd", func() {
 			session := boshSSH("os-conf/0", "sudo cat /etc/shadow")
 			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-password:\$6\$kMBogqsbx\$70Y2m/mwYR8vKZqR9RD2UUPoWz8mJoBiH8IAbvH2v6LCjxJgB3kDtwR8QttqtI/WSqCsFy4qXZaKPM64sZMwK\.:\d+:1:99999:7:::`))
 			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-key::\d+:1:99999:7:::`))
+			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-key-and-password:\$6\$kMBogqsbx\$70Y2m/mwYR8vKZqR9RD2UUPoWz8mJoBiH8IAbvH2v6LCjxJgB3kDtwR8QttqtI/WSqCsFy4qXZaKPM64sZMwK\.:\d+:1:99999:7:::`))
 			Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 		})
 
@@ -32,6 +34,12 @@ var _ = Describe("UserAdd", func() {
 
 			session = boshSSH("os-conf/0", "sudo ls -larth /home/test-user-password/.ssh")
 			Consistently(session, 10*time.Second).ShouldNot(gbytes.Say("authorized_keys"))
+			Eventually(session, 30*time.Second).Should(gexec.Exit(0))
+		})
+
+		By("adding an authorized key for the key-and-password user", func() {
+			session := boshSSH("os-conf/0", "sudo cat /home/test-user-key-and-password/.ssh/authorized_keys")
+			Eventually(session, 30*time.Second).Should(gbytes.Say("test-user-public-key"))
 			Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 		})
 

@@ -14,6 +14,10 @@ templates:
   limits.conf.erb: etc/limits.conf
 
 properties:
+  limits_systemd_default_nofile:
+    description: |
+      Ubuntu xenial needs this set for systemd.conf, DefaultLimitNOFILE
+      All limits.conf and limit.d settings are ignored.
   limits_conf:
     description: |
       Linux `limits.conf` file https://linux.die.net/man/5/limits.conf'

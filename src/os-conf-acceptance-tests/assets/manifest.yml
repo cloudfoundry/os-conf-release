@@ -79,6 +79,12 @@ instance_groups:
       limits_conf: |
         * soft nofile 60000
         * hard nofile 100000
+  - name: limits
+    release: os-conf
+    properties:
+      nofile:
+        soft: 60000
+        hard: 100000
   - name: login_banner
     release: os-conf
     properties:
@@ -133,6 +139,11 @@ instance_groups:
         crypted_password: $6$kMBogqsbx$70Y2m/mwYR8vKZqR9RD2UUPoWz8mJoBiH8IAbvH2v6LCjxJgB3kDtwR8QttqtI/WSqCsFy4qXZaKPM64sZMwK.
         shell: /bin/rbash
       - name: test-user-key
+        public_key: test-user-public-key
+      - name: test-user-key-and-password
+        sudo: false
+        crypted_password: $6$kMBogqsbx$70Y2m/mwYR8vKZqR9RD2UUPoWz8mJoBiH8IAbvH2v6LCjxJgB3kDtwR8QttqtI/WSqCsFy4qXZaKPM64sZMwK.
+        shell: /bin/rbash
         public_key: test-user-public-key
   vm_type: default
   stemcell: default
