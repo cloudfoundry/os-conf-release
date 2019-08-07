@@ -2,4 +2,6 @@
 
 set -ex
 
-echo "<%= p('login_banner.text') %>" > /etc/issue.net
+cat << 'EOF' > /etc/issue.net
+<%= p('login_banner.text') %>
+EOF
