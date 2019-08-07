@@ -12,11 +12,11 @@ properties:
     default: false
   users:
     description: |
-      Array of user hashes. Each user should specify a `name` attribute, and one of
-      either `crypted_password` or `public_key`. Users will not be deleted if
-      they are removed from this list after a successful update. All of the
-      authorized keys for the users will be overwritten with the public key you
-      specify.
+      Array of user hashes. Each user should specify a `name` attribute. Each user
+      should also provide `crypted_password` and/or `public_key`. Users will
+      not be deleted if they are removed from this list after a successful update.
+      All of the authorized keys for the users will be overwritten with the public
+      key you specify.
     example:
       users:
       - name: user1
