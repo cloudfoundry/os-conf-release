@@ -62,7 +62,7 @@ resources:
 jobs:
 - name: os-conf-release-acceptance-tests
   plan:
-  - aggregate:
+  - in_parallel:
     - get: os-conf-release
       trigger: true
     - get: ubuntu-trusty-stemcell
@@ -95,7 +95,7 @@ jobs:
 
 - name: finalize-release
   plan:
-    - aggregate:
+    - in_parallel:
       - get: os-conf-release
         passed: [os-conf-release-acceptance-tests]
       - get: os-conf-version
