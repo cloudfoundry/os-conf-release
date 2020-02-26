@@ -27,8 +27,16 @@ set -ex
         raise "User: '#{user}' with crypted_password: '#{crypted_password}' does not appear to be a SHA512 encrypted password."
       end
       %>
-
-  getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%> --base-dir "$home_dir"
+  # when entity exists and has a different home directory, migrate it
+  entity=$(getent passwd <%=user%> || true)
+  if [ -n "$entity" ]; then
+    entity_home=$(echo "$entity" | awk -F':' '{print $(NF-1)}')
+    if [ "$entity_home" != "$home_dir/<%=user%>" ]; then
+      usermod -m -d "$home_dir/<%=user%>" <%=user%> || mkdir -p "$home_dir/<%=user%>"
+    fi
+  else
+    useradd --create-home <%=user%> --base-dir "$home_dir"
+  fi
   chown -R <%=user%>: "$home_dir/<%=user%>"
   passwd -d <%=user%>
 
