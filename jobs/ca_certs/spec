@@ -16,3 +16,15 @@ properties:
       -----BEGIN CERTIFICATE-----
       MIIClTCCAf4CCQDc6hJtvGB8RjANBgkqhkiG9w0BAQUFADCBjjELMAk...
       -----END CERTIFICATE-----
+  cert_list:
+    description: "Array of concatenated set of certificates in PEM format"
+    default: []
+    example:
+    - |
+      -----BEGIN CERTIFICATE-----
+      MIIClTCCAf4CCQDc6hJtvGB8RjANBgkqhkiG9w0BAQUFADCBjjELMAk...
+      -----END CERTIFICATE-----
+    - |
+      -----BEGIN CERTIFICATE-----
+      MIIClTCCAf4CCQDc6hJtvGB8RjANBgkqhkiG9w0BAQUFADCBjjELMAk...
+      -----END CERTIFICATE-----
