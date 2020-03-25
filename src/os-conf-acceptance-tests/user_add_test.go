@@ -22,7 +22,7 @@ var _ = Describe("UserAdd", func() {
 		By("adding a password for the password user", func() {
 			session := boshSSH("os-conf/0", "sudo cat /etc/shadow")
 			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-password:\$6\$kMBogqsbx\$70Y2m/mwYR8vKZqR9RD2UUPoWz8mJoBiH8IAbvH2v6LCjxJgB3kDtwR8QttqtI/WSqCsFy4qXZaKPM64sZMwK\.:\d+:1:99999:7:::`))
-			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-key::\d+:1:99999:7:::`))
+			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-key:!:\d+:1:99999:7:::`))
 			Eventually(session, 30*time.Second).Should(gbytes.Say(`test-user-key-and-password:\$6\$kMBogqsbx\$70Y2m/mwYR8vKZqR9RD2UUPoWz8mJoBiH8IAbvH2v6LCjxJgB3kDtwR8QttqtI/WSqCsFy4qXZaKPM64sZMwK\.:\d+:1:99999:7:::`))
 			Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 		})
