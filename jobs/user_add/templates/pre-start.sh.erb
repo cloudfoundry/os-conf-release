@@ -60,5 +60,8 @@ set -ex
     echo '<%=public_key%>' > ~<%=user%>/.ssh/authorized_keys
     chmod 600 ~<%=user%>/.ssh/authorized_keys
     chown -R <%=user%> ~<%=user%>/.ssh
+    <% if crypted_password.nil? %>
+      passwd -l <%=user%>
+    <% end %>
   <% end %>
 <% end %>
