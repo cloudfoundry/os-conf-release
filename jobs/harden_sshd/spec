@@ -1,0 +1,19 @@
+---
+name: harden_sshd
+
+templates:
+  pre-start.sh.erb: bin/pre-start
+
+properties:
+  allow_tcp_forwarding:
+    description: Specifies whether TCP forwarding is permitted
+    default: false
+  allow_stream_local_forwarding:
+    description: Specifies whether forwarding Unix domain sockets is permitted
+    default: false
+  gateway_ports:
+    description: Specifies whether remote hosts are allowed to connect to ports forwarded for the client
+    default: false
+  permit_tunnel:
+    description: Specifies whether tun(4) device forwarding	is allowed
+    default: false

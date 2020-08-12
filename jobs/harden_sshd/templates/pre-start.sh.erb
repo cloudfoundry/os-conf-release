@@ -1,0 +1,23 @@
+#!/bin/bash
+
+<% unless p('allow_tcp_forwarding') %>
+    sed "/^ *AllowTcpForwarding/d" -i /etc/ssh/sshd_config
+    echo 'AllowTcpForwarding no' >> /etc/ssh/sshd_config
+<% end %>
+
+<% unless p('allow_stream_local_forwarding') %>
+    sed "/^ *AllowStreamLocalForwarding/d" -i /etc/ssh/sshd_config
+    echo 'AllowStreamLocalForwarding no' >> /etc/ssh/sshd_config
+<% end %>
+
+<% unless p('gateway_ports') %>
+    sed "/^ *GatewayPorts/d" -i /etc/ssh/sshd_config
+    echo 'GatewayPorts no' >> /etc/ssh/sshd_config
+<% end %>
+
+<% unless p('permit_tunnel') %>
+    sed "/^ *PermitTunnel/d" -i /etc/ssh/sshd_config
+    echo 'PermitTunnel no' >> /etc/ssh/sshd_config
+<% end %>
+
+systemctl restart sshd

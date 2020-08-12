@@ -73,6 +73,8 @@ instance_groups:
         AUHr4fJ43qurkZx5FKJcYjpyh+gYou8QGfn/F23O9dlJMrrvGKF4ZruJtIa+uvIA
         mnvqfMDS/A8=
         -----END CERTIFICATE-----
+  - name: harden_sshd
+    release: os-conf
   - name: limits_not_recommended
     release: os-conf
     properties:
