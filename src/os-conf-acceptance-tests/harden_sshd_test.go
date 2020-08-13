@@ -13,7 +13,9 @@ var _ = Describe("HardenSshd", func() {
 	It("hardens the sshd", func() {
 		By("disabeling port forwarding", func() {
 			session := boshSSH("os-conf/0", "sudo sshd -T | sort")
-			Eventually(session, 30*time.Second).Should(gbytes.Say("allowstreamlocalforwarding no"))
+			if boshStemcell != "ubuntu-trusty" {
+				Eventually(session, 30*time.Second).Should(gbytes.Say("allowstreamlocalforwarding no"))
+			}
 			Eventually(session, 30*time.Second).Should(gbytes.Say("allowtcpforwarding no"))
 			Eventually(session, 30*time.Second).Should(gbytes.Say("gatewayports no"))
 			Eventually(session, 30*time.Second).Should(gbytes.Say("permittunnel no"))

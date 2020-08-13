@@ -1,13 +1,17 @@
 #!/bin/bash
 
+sshd_version=$(nc localhost 22 -w1)
+
 <% unless p('allow_tcp_forwarding') %>
     sed "/^ *AllowTcpForwarding/d" -i /etc/ssh/sshd_config
     echo 'AllowTcpForwarding no' >> /etc/ssh/sshd_config
 <% end %>
 
 <% unless p('allow_stream_local_forwarding') %>
+if echo "${sshd_version}" | grep -q "OpenSSH_7"; then
     sed "/^ *AllowStreamLocalForwarding/d" -i /etc/ssh/sshd_config
     echo 'AllowStreamLocalForwarding no' >> /etc/ssh/sshd_config
+fi
 <% end %>
 
 <% unless p('gateway_ports') %>
@@ -20,4 +24,8 @@
     echo 'PermitTunnel no' >> /etc/ssh/sshd_config
 <% end %>
 
-systemctl restart sshd
+if command -v systemctl &> /dev/null; then
+    systemctl restart sshd
+else
+    /etc/init.d/ssh restart
+fi
