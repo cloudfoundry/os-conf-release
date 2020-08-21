@@ -8,6 +8,8 @@ Enables configuration of a typical Linux OS:
 - configure resolv.conf search domain (job: `resolv`)
 - change TCP keepalive kernel args (job: `tcp_keepalive`)
 - apply arbitrary sysctls (job: `sysctl`)
+- disable port forwarding (job: `harden_sshd`)
+  - Note: use with caution, as this can have unintended consequences on features such as SSH Access and Tunneling.
 
 See https://github.com/cloudfoundry-incubator/windows-utilities-release for Windows OS configuration.
 
