@@ -1,0 +1,13 @@
+name: post-deploy-script
+
+templates:
+  post-deploy.sh: bin/post-deploy
+
+packages: []
+
+properties:
+  script:
+    description: Script that is run during post-deploy to allow additional setup of environment, run as root user.
+    example: |-
+        #!/bin/bash
+        apt-get update && apt-get install wget git tmux -y
