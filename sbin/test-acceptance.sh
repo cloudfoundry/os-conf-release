@@ -27,6 +27,5 @@ bosh upload-release release.tgz
 
 
 pushd "${BASEDIR}/src/os-conf-acceptance-tests"
-  go install ./vendor/github.com/onsi/ginkgo/ginkgo
-  ginkgo -v
+  go run github.com/onsi/ginkgo/ginkgo -v
 popd
