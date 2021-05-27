@@ -5,8 +5,8 @@ set -e
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
 export BOSH_BINARY_PATH=${BOSH_BINARY_PATH:-/usr/local/bin/bosh}
-export BOSH_DEPLOYMENT=${BOSH_DEPLOYMENT:-os-conf-xenial}
-export BOSH_STEMCELL=${BOSH_STEMCELL:-ubuntu-xenial}
+export BOSH_DEPLOYMENT=${BOSH_DEPLOYMENT:-os-conf-bionic}
+export BOSH_STEMCELL=${BOSH_STEMCELL:-ubuntu-bionic}
 
 if [ -z ${BBL_STATE_DIR} ]; then
   echo "'BBL_STATE_DIR' not set. You need to specify the path to the 'bbl-state.json' of a working bbl environment."
