@@ -31,16 +31,6 @@ resources:
     gcp_region: us-west1
     gcp_service_account_key: ((bbl_gcp_service_account_key))
 
-- name: ubuntu-trusty-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-ubuntu-trusty-go_agent
-
-- name: ubuntu-xenial-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-ubuntu-xenial-go_agent
-
 - name: ubuntu-bionic-stemcell
   type: bosh-io-stemcell
   source:
@@ -70,30 +60,12 @@ jobs:
   - in_parallel:
     - get: os-conf-release
       trigger: true
-    - get: ubuntu-trusty-stemcell
-      trigger: true
-    - get: ubuntu-xenial-stemcell
-      trigger: true
     - get: ubuntu-bionic-stemcell
       trigger: true
   - do:
     - put: bbl-state
       params:
         command: up
-    - task: run-ubuntu-trusty-os-conf-acceptance-tests
-      file: os-conf-release/ci/tasks/run-acceptance-tests.yml
-      params:
-        BOSH_STEMCELL: ubuntu-trusty
-        BOSH_DEPLOYMENT: os-conf-trusty
-      input_mapping:
-        stemcell: ubuntu-trusty-stemcell
-    - task: run-ubuntu-xenial-os-conf-acceptance-tests
-      file: os-conf-release/ci/tasks/run-acceptance-tests.yml
-      params:
-        BOSH_STEMCELL: ubuntu-xenial
-        BOSH_DEPLOYMENT: os-conf-xenial
-      input_mapping:
-        stemcell: ubuntu-xenial-stemcell
     - task: run-ubuntu-bionic-os-conf-acceptance-tests
       file: os-conf-release/ci/tasks/run-acceptance-tests.yml
       params:
