@@ -41,6 +41,11 @@ resources:
   source:
     name: bosh-google-kvm-ubuntu-xenial-go_agent
 
+- name: ubuntu-bionic-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-google-kvm-ubuntu-bionic-go_agent
+
 - name: os-conf-bosh-release
   type: bosh-release-resource
   source:
@@ -69,6 +74,8 @@ jobs:
       trigger: true
     - get: ubuntu-xenial-stemcell
       trigger: true
+    - get: ubuntu-bionic-stemcell
+      trigger: true
   - do:
     - put: bbl-state
       params:
@@ -87,6 +94,13 @@ jobs:
         BOSH_DEPLOYMENT: os-conf-xenial
       input_mapping:
         stemcell: ubuntu-xenial-stemcell
+    - task: run-ubuntu-bionic-os-conf-acceptance-tests
+      file: os-conf-release/ci/tasks/run-acceptance-tests.yml
+      params:
+        BOSH_STEMCELL: ubuntu-bionic
+        BOSH_DEPLOYMENT: os-conf-bionic
+      input_mapping:
+        stemcell: ubuntu-bionic-stemcell
     ensure:
       put: bbl-state
       params:
