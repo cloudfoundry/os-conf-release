@@ -4,7 +4,6 @@ platform: linux
 inputs:
 - name: stemcell
 - name: os-conf-release
-- name: bbl-state
 
 params:
   BOSH_CLIENT: ~
