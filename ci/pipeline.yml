@@ -6,11 +6,6 @@ groups:
   - finalize-release
 
 resource_types:
-- name: bbl-state-resource
-  type: registry-image
-  source:
-    repository: cfinfrastructure/bbl-state-resource
-
 - name: bosh-release-resource
   type: registry-image
   source:
@@ -22,14 +17,6 @@ resources:
   source:
     uri: https://github.com/cloudfoundry/os-conf-release.git
     branch: master
-
-- name: bbl-state
-  type: bbl-state-resource
-  source:
-    bucket: os-conf-release-bbl-state
-    iaas: gcp
-    gcp_region: us-west1
-    gcp_service_account_key: ((bbl_gcp_service_account_key))
 
 - name: ubuntu-bionic-stemcell
   type: bosh-io-stemcell
@@ -54,6 +41,13 @@ resources:
     access_key_id: ((os-conf-version-access-key-id))
     secret_access_key: ((os-conf-version-secret-access-key))
 
+- name: bosh-ecosystem-docker-image
+  type: docker-image
+  source:
+    repository: bosh/bosh-ecosystem-concourse
+    username: ((docker.username))
+    password: ((docker.password))
+
 jobs:
 - name: os-conf-release-acceptance-tests
   plan:
@@ -62,22 +56,22 @@ jobs:
       trigger: true
     - get: ubuntu-bionic-stemcell
       trigger: true
-  - do:
-    - put: bbl-state
-      params:
-        command: up
-    - task: run-ubuntu-bionic-os-conf-acceptance-tests
-      file: os-conf-release/ci/tasks/run-acceptance-tests.yml
-      params:
-        BOSH_STEMCELL: ubuntu-bionic
-        BOSH_DEPLOYMENT: os-conf-bionic
-      input_mapping:
-        stemcell: ubuntu-bionic-stemcell
-    ensure:
-      put: bbl-state
-      params:
-        command: down
-        state_dir: bbl-state
+    - get: bosh-ecosystem-docker-image
+  - task: run-ubuntu-bionic-os-conf-acceptance-tests
+    file: os-conf-release/ci/tasks/run-acceptance-tests.yml
+    image: bosh-ecosystem-docker-image
+    params:
+      BOSH_CA_CERT: ((iaas_directors_gcp-director_bosh_ca_cert.ca))
+      BOSH_CLIENT: ((iaas_directors_gcp-director_bosh_client.username))
+      BOSH_CLIENT_SECRET: ((iaas_directors_gcp-director_bosh_client.password))
+      BOSH_DEPLOYMENT: os-conf-bionic
+      BOSH_ENVIRONMENT: ((iaas_directors_gcp-director_bosh_environment))
+      BOSH_JUMPBOX_IP: ((iaas_directors_gcp-director_bosh_jumpbox_ip))
+      BOSH_JUMPBOX_PRIVATE_KEY: ((iaas_directors_gcp-director_bosh_jumpbox_ssh.private_key))
+      BOSH_JUMPBOX_USER: ((iaas_directors_gcp-director_bosh_jumpbox_username))
+      BOSH_STEMCELL: ubuntu-bionic
+    input_mapping:
+      stemcell: ubuntu-bionic-stemcell
 
 - name: finalize-release
   plan:

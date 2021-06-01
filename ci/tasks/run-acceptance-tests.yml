@@ -1,19 +1,21 @@
 ---
 platform: linux
 
-image_resource:
-  type: registry-image
-  source:
-    repository: golang
-
 inputs:
 - name: stemcell
 - name: os-conf-release
 - name: bbl-state
 
 params:
-  BOSH_STEMCELL: ~
+  BOSH_CLIENT: ~
+  BOSH_CLIENT_SECRET: ~
+  BOSH_CA_CERT: ~
   BOSH_DEPLOYMENT: ~
+  BOSH_ENVIRONMENT: ~
+  BOSH_JUMPBOX_IP: ~
+  BOSH_JUMPBOX_PRIVATE_KEY: ~
+  BOSH_JUMPBOX_USER: ~
+  BOSH_STEMCELL: ~
 
 run:
   path: os-conf-release/ci/tasks/run-acceptance-tests.sh
