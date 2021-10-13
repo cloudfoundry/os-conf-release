@@ -4,6 +4,14 @@
 
 CONF_DIR=/var/vcap/jobs/ca_certs/config
 
+<% if p("delete_system_certs") %>
+# deleting the certificates on ca-certificates.conf
+echo '' > /etc/ca-certificates.conf
+rm -rf /usr/share/ca-certificates/*
+# choose to *not* trust new certs
+echo 'ca-certificates ca-certificates/trust_new_crts select no' | debconf-set-selections -
+<% end %>
+
 echo "deleting old certificates"
 rm -f /usr/local/share/ca-certificates/bosh_os_conf_ca_cert_*
 

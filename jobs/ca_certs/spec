@@ -6,6 +6,9 @@ templates:
   pre-start.sh.erb: bin/pre-start
 
 properties:
+  delete_system_certs: 
+    description: "Flag to delete the default trusted certificate store"
+    default: false
   certs:
     description: "Concatenated set of certificates in PEM format"
     default: ""
