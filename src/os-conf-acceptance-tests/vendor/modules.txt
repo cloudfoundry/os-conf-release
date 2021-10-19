@@ -1,5 +1,5 @@
 # github.com/golang/protobuf v1.4.3
-## explicit
+## explicit; go 1.9
 # github.com/onsi/ginkgo v1.5.0
 ## explicit
 github.com/onsi/ginkgo
