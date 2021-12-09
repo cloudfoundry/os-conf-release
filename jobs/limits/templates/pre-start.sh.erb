@@ -2,18 +2,14 @@
 
 set -ex
 
-if pidof systemd >/dev/null 2>&1; then
-  NEW_NOFILE="DefaultLimitNOFILE=<%= p("nofile.soft") %>:<%= p("nofile.hard") %>"
-  LINE=$(grep -nE '^DefaultLimitNOFILE=' /etc/systemd/system.conf | tail -1 | awk -F: '{print $1}')
-  if [[ -n "$LINE" ]]; then
-    sed -i "${LINE}s/.*/$NEW_NOFILE/" /etc/systemd/system.conf
-  else
-    echo "$NEW_NOFILE" >> /etc/systemd/system.conf
-  fi
-  systemctl daemon-reload
+NEW_NOFILE="DefaultLimitNOFILE=<%= p("nofile.soft") %>:<%= p("nofile.hard") %>"
+LINE=$(grep -nE '^DefaultLimitNOFILE=' /etc/systemd/system.conf | tail -1 | awk -F: '{print $1}')
+if [[ -n "$LINE" ]]; then
+  sed -i "${LINE}s/.*/$NEW_NOFILE/" /etc/systemd/system.conf
 else
-  >&2 echo "Failed to update systemd configuration because systemd is not running"
+  echo "$NEW_NOFILE" >> /etc/systemd/system.conf
 fi
+systemctl daemon-reload
 
 pid=$(pgrep monit | awk '{print $1}')
 
