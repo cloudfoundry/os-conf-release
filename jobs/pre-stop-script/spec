@@ -1,0 +1,13 @@
+name: pre-stop-script
+
+templates:
+  pre-stop.sh: bin/pre-stop
+
+packages: []
+
+properties:
+  script:
+    description: Script that should run before the VM stops, run as root user.
+    example: |-
+        #!/bin/bash
+        apt-get update && apt-get install wget git tmux -y
