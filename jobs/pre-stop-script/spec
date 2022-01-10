@@ -10,4 +10,4 @@ properties:
     description: Script that should run before the VM stops, run as root user.
     example: |-
         #!/bin/bash
-        apt-get update && apt-get install wget git tmux -y
+        echo "any husekeeping tasks that might fit the use case"
