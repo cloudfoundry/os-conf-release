@@ -12,7 +12,7 @@ import (
 var _ = Describe("Modprobe", func() {
 	It("enables the kernel modules specified", func() {
 		session := boshSSH("os-conf/0", "lsmod")
-		Eventually(session, 30*time.Second).Should(gbytes.Say("aufs"))
+		Eventually(session, 30*time.Second).Should(gbytes.Say("lp"))
 		Eventually(session, 30*time.Second).Should(gexec.Exit(0))
 	})
 })

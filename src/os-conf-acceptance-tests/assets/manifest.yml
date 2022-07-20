@@ -96,7 +96,7 @@ instance_groups:
     release: os-conf
     properties:
       modules:
-      - aufs
+      - lp
   - name: monit
     release: os-conf
     properties:
