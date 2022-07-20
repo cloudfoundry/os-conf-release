@@ -8,7 +8,7 @@ sshd_version=$(nc localhost 22 -w1)
 <% end %>
 
 <% unless p('allow_stream_local_forwarding') %>
-if echo "${sshd_version}" | grep -q "OpenSSH_7"; then
+if [[ $(echo "${sshd_version}" | sed  's#.*OpenSSH_\([0-9]*\)\..*#\1#g') -gt 6 ]]; then
     sed "/^ *AllowStreamLocalForwarding/d" -i /etc/ssh/sshd_config
     echo 'AllowStreamLocalForwarding no' >> /etc/ssh/sshd_config
 fi
