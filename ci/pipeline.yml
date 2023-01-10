@@ -19,7 +19,7 @@ resources:
   source:
     uri: git@github.com:cloudfoundry/os-conf-release.git
     branch: master
-    private_key: ((os-conf-private-key))
+    private_key: ((github_deploy_key_os-conf-release.private_key))
 
 - name: golang-release
   type: git
@@ -42,8 +42,13 @@ resources:
   source:
     uri: git@github.com:cloudfoundry/os-conf-release
     branch: master
-    private_config: ((os-conf-private-config))
-    private_key: ((os-conf-private-key))
+    private_config:
+      blobstore:
+        options:
+          access_key_id: ((os-conf-upload_aws_access_key.username))
+          secret_access_key: ((os-conf-upload_aws_access_key.password))
+        provider: s3
+    private_key: ((github_deploy_key_os-conf-release.private_key))
 
 - name: os-conf-version
   type: semver
@@ -52,8 +57,8 @@ resources:
     bucket: os-conf-version
     key: current-version
     initial_version: 20.0.0
-    access_key_id: ((os-conf-version-access-key-id))
-    secret_access_key: ((os-conf-version-secret-access-key))
+    access_key_id: ((os-conf-upload_aws_access_key.username))
+    secret_access_key: ((os-conf-upload_aws_access_key.password))
 
 - name: weekly
   type: time
