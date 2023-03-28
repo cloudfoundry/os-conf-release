@@ -30,7 +30,7 @@ resources:
 - name: ubuntu-bionic-stemcell
   type: bosh-io-stemcell
   source:
-    name: bosh-google-kvm-ubuntu-jammy-go_agent
+    name: bosh-google-kvm-ubuntu-bionic-go_agent
 
 - name: ubuntu-jammy-stemcell
   type: bosh-io-stemcell

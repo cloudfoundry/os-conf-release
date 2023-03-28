@@ -8,6 +8,5 @@ FLY="${FLY_CLI:-fly}"
 
 "$FLY" -t "${CONCOURSE_TARGET:-bosh-ecosystem}" \
   sp -p os-conf-release \
-  -c "$dir/pipeline.yml" \
-  -l <(lpass show --notes 'os-conf-release pipeline vars') \
+  -c "$dir/pipeline.yml"
 
