@@ -65,6 +65,7 @@ resources:
 
 jobs:
 - name: os-conf-release-acceptance-tests-jammy
+  serial: true
   plan:
   - in_parallel:
     - get: os-conf-release
@@ -88,6 +89,7 @@ jobs:
     input_mapping:
       stemcell: ubuntu-jammy-stemcell
 - name: os-conf-release-acceptance-tests-bionic
+  serial: true
   plan:
   - in_parallel:
     - get: os-conf-release
