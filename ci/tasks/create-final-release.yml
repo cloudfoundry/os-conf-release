@@ -7,6 +7,6 @@ outputs:
   - name: os-conf-release
   - name: released-version
 run:
-  path: os-conf-release/ci/tasks/create-release.sh
+  path: os-conf-release/ci/tasks/create-final-release.sh
 params:
   PRIVATE_YML:
