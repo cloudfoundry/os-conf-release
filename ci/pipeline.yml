@@ -1,18 +1,4 @@
 ---
-groups:
-- name: os-conf-release
-  jobs:
-  - os-conf-release-acceptance-tests-bionic
-  - os-conf-release-acceptance-tests-jammy
-  - finalize-release
-  - bump-deps
-
-resource_types:
-- name: bosh-release-resource
-  type: registry-image
-  source:
-    repository: dpb587/bosh-release-resource
-
 resources:
 - name: os-conf-release
   type: git
@@ -26,7 +12,6 @@ resources:
   source:
     uri: https://github.com/bosh-packages/golang-release.git
 
-
 - name: ubuntu-bionic-stemcell
   type: bosh-io-stemcell
   source:
@@ -36,19 +21,6 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-google-kvm-ubuntu-jammy-go_agent
-
-- name: os-conf-bosh-release
-  type: bosh-release-resource
-  source:
-    uri: git@github.com:cloudfoundry/os-conf-release
-    branch: master
-    private_config:
-      blobstore:
-        options:
-          access_key_id: ((os-conf-upload_aws_access_key.username))
-          secret_access_key: ((os-conf-upload_aws_access_key.password))
-        provider: s3
-    private_key: ((github_deploy_key_os-conf-release.private_key))
 
 - name: os-conf-version
   type: semver
@@ -73,6 +45,23 @@ resources:
     repository: bosh/bosh-ecosystem-concourse
     username: ((docker.username))
     password: ((docker.password))
+
+- name: release-notes
+  type: s3-resource
+  source:
+    bucket: os-conf-version
+    access_key_id: ((os-conf-upload_aws_access_key.username))
+    secret_access_key: ((os-conf-upload_aws_access_key.password))
+    versioned_file: release-notes.md
+    initial_version: "0"
+    initial_content_text: ""
+
+- name: github-release
+  type: github-release
+  source:
+    owner: cloudfoundry
+    repository: os-conf-release
+    access_token: ((github_public_repo_token))
 
 jobs:
 - name: os-conf-release-acceptance-tests-jammy
@@ -122,23 +111,6 @@ jobs:
     input_mapping:
       stemcell: ubuntu-bionic-stemcell
 
-- name: finalize-release
-  plan:
-    - in_parallel:
-      - get: os-conf-release
-        passed: [os-conf-release-acceptance-tests-jammy,os-conf-release-acceptance-tests-bionic]
-      - get: os-conf-version
-    - put: os-conf-bosh-release
-      params:
-        repository: os-conf-release
-        version: os-conf-version/version
-        author_name: CF BOSH
-        author_email: pivotal-sf-bosh@pivotal.io
-        rebase: true
-    - put: os-conf-version
-      params:
-        bump: patch
-
 - name: bump-deps
   plan:
   - in_parallel:
@@ -158,3 +130,99 @@ jobs:
     params:
       repository: bumped-os-conf-release
       rebase: true
+
+- name: automatically-release-new-patch
+  serial: true
+  plan:
+    - in_parallel:
+        - get: os-conf-release
+          trigger: true
+          passed:
+            - os-conf-release-acceptance-tests-jammy
+            - os-conf-release-acceptance-tests-bionic
+        - get: golang-release
+        - get: os-conf-version
+    - try:
+        task: check-for-patched-cves
+        file: golang-release/ci/tasks/shared/check-for-patched-cves.yml
+        input_mapping:
+          input_repo: os-conf-release
+          version: os-conf-version
+        params:
+          SEVERITY: CRITICAL,HIGH
+          SOURCE_PATH: src
+        on_success:
+          do:
+            - put: release-notes
+              params:
+                file: patched_cves/release-notes.md
+            - put: os-conf-version
+              params:
+                bump: patch
+    - task: ensure-cve-checker-succeeded
+      file: golang-release/ci/tasks/shared/ensure-cve-checker-succeeded.yml
+      params:
+        description: |
+          Since the previous step is wrapped in a "try", this task checks that the previous step fully executed.
+
+
+- name: create-final-release
+  plan:
+    - in_parallel:
+        - get: os-conf-release
+          passed:
+            - os-conf-release-acceptance-tests-jammy
+            - os-conf-release-acceptance-tests-bionic
+        - get: os-conf-version
+          trigger: true
+        - get: release-notes
+        - get: bosh-ecosystem-docker-image
+    - task: create-final-release
+      file: os-conf-release/ci/tasks/create-final-release.yml
+      image: bosh-ecosystem-docker-image
+      params:
+        PRIVATE_YML:
+          blobstore:
+            provider: s3
+            options:
+              access_key_id: ((os-conf-upload_aws_access_key.username))
+              secret_access_key: ((os-conf-upload_aws_access_key.password))
+    - put: github-release
+      params:
+        name: released-version/prefixed-semver-version
+        tag: released-version/prefixed-semver-version
+        body: release-notes/release-notes.md
+
+- name: clear-release-notes
+  plan:
+    - get: os-conf-version
+      passed:
+        - create-final-release
+      trigger: true
+    - get: golang-release
+    - task: clear-release-notes
+      file: golang-release/ci/tasks/shared/clear-release-notes.yml
+    - put: release-notes
+      params:
+        file: release-notes/release-notes.md
+
+- name: create-final-release-major
+  serial: true
+  plan:
+    - put: os-conf-version
+      params:
+        bump: major
+
+- name: create-final-release-minor
+  serial: true
+  plan:
+    - put: os-conf-version
+      params:
+        bump: minor
+
+- name: create-final-release-patch
+  serial: true
+  plan:
+    - put: os-conf-version
+      params:
+        bump: patch

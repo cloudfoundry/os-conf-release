@@ -1,0 +1,12 @@
+---
+platform: linux
+inputs:
+  - name: os-conf-release
+  - name: os-conf-version
+outputs:
+  - name: os-conf-release
+  - name: released-version
+run:
+  path: os-conf-release/ci/tasks/create-release.sh
+params:
+  PRIVATE_YML:
