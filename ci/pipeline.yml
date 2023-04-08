@@ -47,7 +47,7 @@ resources:
     password: ((docker.password))
 
 - name: release-notes
-  type: s3-resource
+  type: s3
   source:
     bucket: os-conf-version
     access_key_id: ((os-conf-upload_aws_access_key.username))
