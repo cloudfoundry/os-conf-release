@@ -170,6 +170,7 @@ jobs:
 
 
 - name: create-final-release
+  disable_manual_trigger: true
   plan:
     - in_parallel:
         - get: os-conf-release
