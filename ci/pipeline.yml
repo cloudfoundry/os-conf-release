@@ -1,4 +1,11 @@
 ---
+resource_types:
+- name: semver
+  type: docker-image
+  source:
+    repository: concourse/semver-resource
+    tag: 1.6
+
 resources:
 - name: os-conf-release
   type: git
@@ -29,8 +36,9 @@ resources:
     bucket: os-conf-version
     key: current-version
     initial_version: 20.0.0
-    access_key_id: ((os-conf-upload_aws_access_key.username))
-    secret_access_key: ((os-conf-upload_aws_access_key.password))
+    access_key_id: ((os-conf-upload_assume_aws_access_key.username))
+    secret_access_key: ((os-conf-upload_assume_aws_access_key.password))
+    assume_role_arn: ((os-conf-upload_assume_aws_access_key.role_arn))
 
 - name: weekly
   type: time
