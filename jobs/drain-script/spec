@@ -1,0 +1,14 @@
+---
+name: drain-script
+
+templates:
+  drain.sh: bin/drain
+
+packages: []
+
+properties:
+  script:
+    description: Script that is run during drain to allow running actions before a VM gets stopped
+    example: |-
+      #! bin/bash
+      < put your script here >
