@@ -1,5 +1,12 @@
 #!/bin/bash
 
+set -xeu -o pipefail
+
+date
+echo Delaying start for '<%= p("pre_start_delay") %>' seconds
+sleep '<%= p("pre_start_delay") %>'
+date
+
 if ! grep -e '^-e 2$' /etc/audit/rules.d/audit.rules -q; then
   echo '
 # Custom rules; added by auditd job (os-conf-release)
