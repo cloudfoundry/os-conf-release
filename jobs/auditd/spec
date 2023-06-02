@@ -12,3 +12,7 @@ properties:
     default: []
     example:
     - "-a always,exit -F perm=x -F auid>=500 -F auid!=4294967295 -F path=/usr/bin/who -k privileged"
+  pre_start_delay:
+    description: The number of seconds to delay running the pre-start script. This can be used, for example, to avoid a race condition with other pre-start scripts, such as IPsec's, that can prevent auditd From starting
+    default: 0
+    example: 30
