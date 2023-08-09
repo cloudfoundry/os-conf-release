@@ -19,11 +19,6 @@ resources:
   source:
     uri: https://github.com/cloudfoundry/bosh-package-golang-release.git
 
-- name: ubuntu-bionic-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-ubuntu-bionic-go_agent
-
 - name: ubuntu-jammy-stemcell
   type: bosh-io-stemcell
   source:
@@ -97,30 +92,6 @@ jobs:
       BOSH_STEMCELL: ubuntu-jammy
     input_mapping:
       stemcell: ubuntu-jammy-stemcell
-- name: os-conf-release-acceptance-tests-bionic
-  serial: true
-  plan:
-  - in_parallel:
-    - get: os-conf-release
-      trigger: true
-    - get: ubuntu-bionic-stemcell
-      trigger: true
-    - get: bosh-ecosystem-docker-image
-  - task: run-ubuntu-bionic-os-conf-acceptance-tests
-    file: os-conf-release/ci/tasks/run-acceptance-tests.yml
-    image: bosh-ecosystem-docker-image
-    params:
-      BOSH_CA_CERT: ((iaas_directors_gcp-director_bosh_ca_cert.ca))
-      BOSH_CLIENT: ((iaas_directors_gcp-director_bosh_client.username))
-      BOSH_CLIENT_SECRET: ((iaas_directors_gcp-director_bosh_client.password))
-      BOSH_DEPLOYMENT: os-conf-bionic
-      BOSH_ENVIRONMENT: ((iaas_directors_gcp-director_bosh_environment))
-      BOSH_JUMPBOX_IP: ((iaas_directors_gcp-director_bosh_jumpbox_ip))
-      BOSH_JUMPBOX_PRIVATE_KEY: ((iaas_directors_gcp-director_bosh_jumpbox_ssh.private_key))
-      BOSH_JUMPBOX_USER: ((iaas_directors_gcp-director_bosh_jumpbox_username))
-      BOSH_STEMCELL: ubuntu-bionic
-    input_mapping:
-      stemcell: ubuntu-bionic-stemcell
 
 - name: bump-deps
   plan:
@@ -150,7 +121,6 @@ jobs:
           trigger: true
           passed:
             - os-conf-release-acceptance-tests-jammy
-            - os-conf-release-acceptance-tests-bionic
         - get: golang-release
         - get: os-conf-version
     - try:
@@ -184,7 +154,6 @@ jobs:
         - get: os-conf-release
           passed:
             - os-conf-release-acceptance-tests-jammy
-            - os-conf-release-acceptance-tests-bionic
         - get: os-conf-version
           trigger: true
         - get: release-notes
