@@ -22,5 +22,5 @@ bosh upload-release release.tgz
 export BOSH_BINARY_PATH=$(which bosh)
 
 pushd "${PWD}/os-conf-release/src/os-conf-acceptance-tests"
-  go run github.com/onsi/ginkgo/ginkgo/v2 -v
+  go run github.com/onsi/ginkgo/v2/ginkgo -v
 popd
