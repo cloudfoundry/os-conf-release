@@ -19,5 +19,17 @@ if ! grep -e '^-e 2$' /etc/audit/rules.d/audit.rules -q; then
 # Make audit rules immutable; added by auditd job (os-conf-release)
 -e 2' >> /etc/audit/rules.d/audit.rules
 
-  service auditd restart
+  # If auditd has trouble coming up, (e.g. `ENOBUFS`), we try for 5 minutes
+  # before giving up
+  COUNT=0
+  service auditd stop
+  while ! service auditd status && [ $COUNT -lt 10 ]; do
+    service auditd restart
+    COUNT=$(( COUNT + 1 ))
+    sleep 30
+  done
+  if [ $COUNT -ge 10 ]; then
+    echo "Could not start auditd; tried $COUNT times. Check auditd logs"
+    exit 1
+  fi
 fi
