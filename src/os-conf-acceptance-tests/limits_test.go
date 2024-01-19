@@ -11,7 +11,7 @@ import (
 
 var _ = Describe("Limits", func() {
 	BeforeEach(func() {
-		if boshStemcell == "ubuntu-trusty" {
+		if boshStemcellOS == "ubuntu-trusty" {
 			Skip("Trusty Stemcells are not supported.")
 		}
 	})

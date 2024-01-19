@@ -11,7 +11,7 @@ import (
 
 var _ = Describe("NTPDate", func() {
 	BeforeEach(func() {
-		if boshStemcell != "ubuntu-trusty" {
+		if boshStemcellOS != "ubuntu-trusty" {
 			Skip("Only Trusty Stemcells use ntpdate")
 		}
 	})
