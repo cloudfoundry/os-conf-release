@@ -181,4 +181,5 @@ update:
 stemcells:
 - alias: default
   os: ((stemcell_os))
+  name: ((stemcell_name))
   version: latest

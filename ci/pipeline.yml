@@ -89,7 +89,8 @@ jobs:
       BOSH_JUMPBOX_IP: ((iaas_directors_gcp-director_bosh_jumpbox_ip))
       BOSH_JUMPBOX_PRIVATE_KEY: ((iaas_directors_gcp-director_bosh_jumpbox_ssh.private_key))
       BOSH_JUMPBOX_USER: ((iaas_directors_gcp-director_bosh_jumpbox_username))
-      BOSH_STEMCELL: ubuntu-jammy
+      BOSH_STEMCELL_OS: ubuntu-jammy
+      BOSH_STEMCELL_NAME: bosh-google-kvm-ubuntu-jammy-go_agent
     input_mapping:
       stemcell: ubuntu-jammy-stemcell
 

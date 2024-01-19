@@ -14,7 +14,8 @@ params:
   BOSH_JUMPBOX_IP: ~
   BOSH_JUMPBOX_PRIVATE_KEY: ~
   BOSH_JUMPBOX_USER: ~
-  BOSH_STEMCELL: ~
+  BOSH_STEMCELL_OS: ~
+  BOSH_STEMCELL_NAME: ~
 
 run:
   path: os-conf-release/ci/tasks/run-acceptance-tests.sh
