@@ -1,0 +1,13 @@
+name: pre-stop-script
+
+templates:
+  pre-stop.sh: bin/pre-stop
+
+packages: []
+
+properties:
+  script:
+    description: Script that is run during pre-stop to allow additional setup of environment, run as root user.
+    example: |-
+        #!/bin/bash
+        apt-get update && apt-get install wget git tmux -y
