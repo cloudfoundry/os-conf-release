@@ -1,8 +1,6 @@
 module github.com/cloudfoundry/os-conf-release/src/os-conf-acceptance-tests
 
-go 1.21
-
-toolchain go1.21.0
+go 1.21.0
 
 require (
 	github.com/onsi/ginkgo/v2 v2.15.0
