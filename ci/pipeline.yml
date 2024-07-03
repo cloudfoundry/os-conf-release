@@ -180,6 +180,7 @@ jobs:
         name: released-version/prefixed-semver-version
         tag: released-version/prefixed-semver-version
         body: release-notes/release-notes.md
+        generate_release_notes: true
 
 - name: clear-release-notes
   plan:
