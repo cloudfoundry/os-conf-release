@@ -171,6 +171,10 @@ jobs:
               secret_access_key: ((os-conf-upload_assume_aws_access_key.password))
               assume_role_arn: ((os-conf-upload_assume_aws_access_key.role_arn))
     - put: os-conf-release
+      params:
+        repository: os-conf-release
+        rebase: true
+        tag: released-version/prefixed-semver-version
     - put: github-release
       params:
         name: released-version/prefixed-semver-version
