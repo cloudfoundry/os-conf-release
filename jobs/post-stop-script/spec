@@ -1,0 +1,15 @@
+name: post-stop-script
+
+templates:
+  post-stop.sh: bin/post-stop
+
+packages: []
+
+properties:
+  script:
+    description: Script that is run during post-stop to allow additional setup of environment, run as root user.
+    example: |-
+        #!/bin/bash
+        echo "Sleeping for 20 seconds"
+        sleep 20
+        echo "Done sleeping for 20 seconds"
