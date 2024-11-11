@@ -46,10 +46,17 @@ resources:
     stop: 4:30 -0700
     days: [ Saturday ]
 
-- name: bosh-ecosystem-docker-image
-  type: docker-image
+- name: bosh-ecosystem-registry-image
+  type: registry-image
   source:
     repository: bosh/bosh-ecosystem-concourse
+    username: ((docker.username))
+    password: ((docker.password))
+
+- name: bosh-security-scanner-registry-image
+  type: registry-image
+  source:
+    repository: bosh/security-scanner
     username: ((docker.username))
     password: ((docker.password))
 
@@ -78,10 +85,10 @@ jobs:
       trigger: true
     - get: ubuntu-jammy-stemcell
       trigger: true
-    - get: bosh-ecosystem-docker-image
+    - get: bosh-ecosystem-registry-image
   - task: run-ubuntu-jammy-os-conf-acceptance-tests
     file: os-conf-release/ci/tasks/run-acceptance-tests.yml
-    image: bosh-ecosystem-docker-image
+    image: bosh-ecosystem-registry-image
     params:
       BOSH_CA_CERT: ((iaas_directors_gcp-director_bosh_ca_cert.ca))
       BOSH_CLIENT: ((iaas_directors_gcp-director_bosh_client.username))
@@ -124,11 +131,13 @@ jobs:
           trigger: true
           passed:
             - os-conf-release-acceptance-tests-jammy
-        - get: golang-release
+        - get: bosh-shared-ci
         - get: os-conf-version
+        - get: bosh-security-scanner-registry-image
     - try:
         task: check-for-patched-cves
-        file: golang-release/ci/tasks/shared/check-for-patched-cves.yml
+        file: bosh-shared-ci/tasks/release/check-for-patched-cves.yml
+        image: bosh-security-scanner-registry-image
         input_mapping:
           input_repo: os-conf-release
           version: os-conf-version
@@ -144,12 +153,10 @@ jobs:
               params:
                 bump: patch
     - task: ensure-cve-checker-succeeded
-      file: golang-release/ci/tasks/shared/ensure-cve-checker-succeeded.yml
-      params:
-        description: |
-          Since the previous step is wrapped in a "try", this task checks that the previous step fully executed.
-
-
+      file: bosh-shared-ci/tasks/release/ensure-task-succeeded.yml
+      image: bosh-security-scanner-registry-image
+      input_mapping:
+        task-output-folder: patched_cves
 - name: create-final-release
   disable_manual_trigger: true
   plan:
@@ -160,11 +167,11 @@ jobs:
         - get: os-conf-version
           trigger: true
         - get: release-notes
-        - get: bosh-ecosystem-docker-image
+        - get: bosh-ecosystem-registry-image
         - get: bosh-shared-ci
     - task: create-final-release
       file: bosh-shared-ci/ci/tasks/create-final-release.yml
-      image: bosh-ecosystem-docker-image
+      image: bosh-ecosystem-registry-image
       input_mapping:
         release_repo: os-conf-release
         version: os-conf-version
@@ -189,19 +196,9 @@ jobs:
         tag: release_metadata/tag-name
         body: release-notes/release-notes.md
         generate_release_notes: true
-
-- name: clear-release-notes
-  plan:
-    - get: os-conf-version
-      passed:
-        - create-final-release
-      trigger: true
-    - get: golang-release
-    - task: clear-release-notes
-      file: golang-release/ci/tasks/shared/clear-release-notes.yml
     - put: release-notes
       params:
-        file: release-notes/release-notes.md
+        file: release_metadata/empty-file
 
 - name: create-final-release-major
   serial: true
