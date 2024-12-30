@@ -170,7 +170,7 @@ jobs:
         - get: bosh-ecosystem-registry-image
         - get: bosh-shared-ci
     - task: create-final-release
-      file: bosh-shared-ci/ci/tasks/create-final-release.yml
+      file: bosh-shared-ci/tasks/release/create-final-release.yml
       image: bosh-ecosystem-registry-image
       input_mapping:
         release_repo: os-conf-release
