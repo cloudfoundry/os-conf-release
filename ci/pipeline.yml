@@ -196,6 +196,7 @@ jobs:
         tag: release_metadata/tag-name
         body: release-notes/release-notes.md
         generate_release_notes: true
+        commitish: os-conf-release/.git/ref
     - put: release-notes
       params:
         file: release_metadata/empty-file
