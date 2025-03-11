@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e -u
+
+mkdir -p /var/vcap/sys/run/iptables
+
+case $1 in
+
+  start)
+      /var/vcap/jobs/iptables/bin/enable.sh
+      touch /var/vcap/sys/run/iptables/iptables.check
+      ;;
+
+  stop)
+      /var/vcap/jobs/iptables/bin/disable.sh
+      rm /var/vcap/sys/run/iptables/iptables.check
+      ;;
+  *)
+
+esac
+
+exit 0

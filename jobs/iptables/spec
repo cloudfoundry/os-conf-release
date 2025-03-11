@@ -1,0 +1,16 @@
+---
+name: iptables
+
+templates:
+  bin/ctl: bin/ctl
+  bin/enable.sh: bin/enable.sh
+  bin/disable.sh: bin/disable.sh
+
+properties:
+  iptables:
+    description: "Map of rules per chain per table to apply in iptables"
+    default: {}
+    example:
+      nat:            # one of: nat, filter, raw, mangle, security
+        POSTROUTING:  # a valid chain
+        - -s 10.244.0.0/24 -j MASQUERADE
