@@ -1,0 +1,5 @@
+check file iptables
+  with path /var/vcap/sys/run/iptables/iptables.check
+  start program "/var/vcap/jobs/iptables/bin/ctl start"
+  stop program "/var/vcap/jobs/iptables/bin/ctl stop"
+  group vcap
