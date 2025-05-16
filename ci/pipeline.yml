@@ -97,7 +97,7 @@ jobs:
       BOSH_DEPLOYMENT: os-conf-jammy
       BOSH_ENVIRONMENT: ((iaas_directors_labs-gcp-director_bosh_environment))
       BOSH_STEMCELL_OS: ubuntu-jammy
-      BOSH_STEMCELL_NAME: bosh-aws-xen-hvm-ubuntu-jammy-go_agent
+      BOSH_STEMCELL_NAME: bosh-google-kvm-ubuntu-jammy-go_agent
     input_mapping:
       stemcell: ubuntu-jammy-stemcell
     tags: [ broadcom ]
