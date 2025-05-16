@@ -29,7 +29,7 @@ resources:
 - name: ubuntu-jammy-stemcell
   type: bosh-io-stemcell
   source:
-    name: bosh-aws-xen-hvm-ubuntu-jammy-go_agent
+    name: bosh-google-kvm-ubuntu-jammy-go_agent
 
 - name: os-conf-version
   type: semver
@@ -91,18 +91,16 @@ jobs:
     file: os-conf-release/ci/tasks/run-acceptance-tests.yml
     image: bosh-ecosystem-registry-image
     params:
-      BOSH_CA_CERT: ((iaas_directors_aws-director_bosh_ca_cert.ca))
-      BOSH_CLIENT: ((iaas_directors_aws-director_bosh_client.username))
-      BOSH_CLIENT_SECRET: ((iaas_directors_aws-director_bosh_client.password))
+      BOSH_CA_CERT: ((iaas_directors_labs-gcp-director_bosh_ca_cert.ca))
+      BOSH_CLIENT: ((iaas_directors_labs-gcp-director_bosh_client.username))
+      BOSH_CLIENT_SECRET: ((iaas_directors_labs-gcp-director_bosh_client.password))
       BOSH_DEPLOYMENT: os-conf-jammy
-      BOSH_ENVIRONMENT: ((iaas_directors_aws-director_bosh_environment))
-      BOSH_JUMPBOX_IP: ((iaas_directors_aws-director_bosh_jumpbox_ip))
-      BOSH_JUMPBOX_PRIVATE_KEY: ((iaas_directors_aws-director_bosh_jumpbox_ssh.private_key))
-      BOSH_JUMPBOX_USER: ((iaas_directors_aws-director_bosh_jumpbox_username))
+      BOSH_ENVIRONMENT: ((iaas_directors_labs-gcp-director_bosh_environment))
       BOSH_STEMCELL_OS: ubuntu-jammy
       BOSH_STEMCELL_NAME: bosh-aws-xen-hvm-ubuntu-jammy-go_agent
     input_mapping:
       stemcell: ubuntu-jammy-stemcell
+    tags: [ broadcom ]
 
 - name: bump-deps
   plan:

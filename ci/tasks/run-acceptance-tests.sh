@@ -8,12 +8,14 @@ export PATH="${GOPATH}/bin:$PATH"
 apt-get update
 apt-get install -y netcat-openbsd
 
-jumpbox_url=${BOSH_JUMPBOX_URL:-${BOSH_JUMPBOX_IP}:22}
-jumpbox_private_key_path=$(mktemp)
-chmod 600 ${jumpbox_private_key_path}
-echo "${BOSH_JUMPBOX_PRIVATE_KEY}" > ${jumpbox_private_key_path}
+if [ -n "$BOSH_JUMPBOX_PRIVATE_KEY" ]; then
+  jumpbox_url=${BOSH_JUMPBOX_URL:-${BOSH_JUMPBOX_IP}:22}
+  jumpbox_private_key_path=$(mktemp)
+  chmod 600 ${jumpbox_private_key_path}
+  echo "${BOSH_JUMPBOX_PRIVATE_KEY}" > ${jumpbox_private_key_path}
 
-export BOSH_ALL_PROXY=ssh+socks5://${BOSH_JUMPBOX_USER}@${jumpbox_url}?private-key=${jumpbox_private_key_path}
+  export BOSH_ALL_PROXY="ssh+socks5://${BOSH_JUMPBOX_USER}@${jumpbox_url}?private-key=${jumpbox_private_key_path}"
+fi
 
 bosh upload-stemcell ${PWD}/stemcell/*.tgz
 bosh create-release --dir ${PWD}/os-conf-release --timestamp-version --tarball=release.tgz
