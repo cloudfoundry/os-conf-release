@@ -3,7 +3,7 @@ name: ((deployment_name))
 
 instance_groups:
 - name: os-conf
-  azs: [az1]
+  azs: [z1]
   instances: 1
   jobs:
   - name: auditd
@@ -155,7 +155,7 @@ instance_groups:
 # This instance defaults to 0 instances This test is expensive to run
 # because it puts BOSH in an undesirable state
 - name: unresponsive-agent
-  azs: [az1]
+  azs: [z1]
   instances: 0
   jobs:
   - name: disable_agent
