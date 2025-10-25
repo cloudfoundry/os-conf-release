@@ -3,7 +3,7 @@ module github.com/cloudfoundry/os-conf-release/src/os-conf-acceptance-tests
 go 1.23.0
 
 require (
-	github.com/onsi/ginkgo/v2 v2.26.0
+	github.com/onsi/ginkgo/v2 v2.27.1
 	github.com/onsi/gomega v1.38.2
 )
 
