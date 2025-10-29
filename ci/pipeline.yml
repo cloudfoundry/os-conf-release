@@ -111,12 +111,14 @@ jobs:
       trigger: true
   - task: bump-deps
     file: golang-release/ci/tasks/shared/bump-deps.yml
+    tags: [ broadcom ]
     input_mapping:
       input_repo: os-conf-release
     output_mapping:
       output_repo: bumped-os-conf-release
     params:
       SOURCE_PATH: src/os-conf-acceptance-tests
+      GOPROXY: https://((broadcom_artifactory_mirrors.username)):((broadcom_artifactory_mirrors.password))@((broadcom_artifactory_mirrors.golang)),off
   - put: os-conf-release
     params:
       repository: bumped-os-conf-release
