@@ -118,7 +118,8 @@ jobs:
       output_repo: bumped-os-conf-release
     params:
       SOURCE_PATH: src/os-conf-acceptance-tests
-      GOPROXY: https://((broadcom_artifactory_mirrors.username)):((broadcom_artifactory_mirrors.password))@((broadcom_artifactory_mirrors.golang)),off
+      GOPROXY: ((repository_mirrors.goproxy))
+      GOSUMDB: ((repository_mirrors.gosumdb))
   - put: os-conf-release
     params:
       repository: bumped-os-conf-release
