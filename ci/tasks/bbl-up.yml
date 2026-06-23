@@ -1,0 +1,17 @@
+---
+platform: linux
+
+inputs:
+  - name: os-conf-release
+  - name: bosh-deployment
+
+outputs:
+  - name: bbl-state
+
+params:
+  BBL_IAAS: gcp
+  BBL_GCP_SERVICE_ACCOUNT_KEY: ~
+  BBL_GCP_REGION: ~
+
+run:
+  path: os-conf-release/ci/tasks/bbl-up.sh

@@ -26,9 +26,10 @@ func TestOsConfAcceptanceTests(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	boshBinaryPath = assertEnvExists("BOSH_BINARY_PATH")
-	deploymentName = assertEnvExists("BOSH_DEPLOYMENT")
 	boshStemcellOS = assertEnvExists("BOSH_STEMCELL_OS")
 	boshStemcellName = assertEnvExists("BOSH_STEMCELL_NAME")
+
+	deploymentName = fmt.Sprintf("os-conf-acceptance-tests_%s", boshStemcellOS)
 
 	assertEnvExists("BOSH_CLIENT")
 	assertEnvExists("BOSH_CLIENT_SECRET")

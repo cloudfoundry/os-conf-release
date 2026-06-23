@@ -1,225 +1,258 @@
 ---
 resource_types:
-- name: gcs
-  type: registry-image
-  source:
-    repository: frodenas/gcs-resource
-    username: ((docker.username))
-    password: ((docker.password))
+  - name: gcs
+    type: registry-image
+    source:
+      repository: frodenas/gcs-resource
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
 
 resources:
-- name: bosh-shared-ci
-  type: git
-  source:
-    uri: https://github.com/cloudfoundry/bosh-shared-ci.git
+  - name: bosh-shared-ci
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/bosh-shared-ci.git
 
-- name: os-conf-release
-  type: git
-  source:
-    uri: https://github.com/cloudfoundry/os-conf-release.git
-    username: bosh-admin-bot
-    password: ((github_read_write_token))
-    branch: master
+  - name: os-conf-release
+    type: git
+    source:
+      uri: git@github.com:cloudfoundry/os-conf-release.git
+      private_key: ((github_deploy_key_os-conf-release.private_key))
+      branch: master
 
-- name: golang-release
-  type: git
-  source:
-    uri: https://github.com/cloudfoundry/bosh-package-golang-release.git
+  - name: golang-release
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/bosh-package-golang-release.git
 
-- name: ubuntu-jammy-stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-google-kvm-ubuntu-jammy-go_agent
+  - name: ubuntu-jammy
+    type: bosh-io-stemcell
+    source:
+      name: bosh-google-kvm-ubuntu-jammy-go_agent
 
-- name: os-conf-version
-  type: semver
-  source:
-    driver: gcs
-    bucket: os-conf-pipeline
-    key: current-version
-    initial_version: 20.0.0
-    json_key: ((cloud-foundry-gcp-credentials))
+  - name: os-conf-version
+    type: semver
+    source:
+      driver: gcs
+      bucket: os-conf-pipeline
+      key: current-version
+      initial_version: 20.0.0
+      json_key: ((gcp_json_key))
 
-- name: weekly
-  type: time
-  source:
-    start: 3:00 -0700
-    stop: 4:30 -0700
-    days: [ Saturday ]
+  - name: bosh-deployment
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/bosh-deployment.git
 
-- name: bosh-ecosystem-registry-image
-  type: registry-image
-  source:
-    repository: bosh/bosh-ecosystem-concourse
-    username: ((docker.username))
-    password: ((docker.password))
+  - name: cf-deployment-concourse-tasks-registry-image
+    type: registry-image
+    source:
+      repository: cloudfoundry/cf-deployment-concourse-tasks
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
 
-- name: bosh-security-scanner-registry-image
-  type: registry-image
-  source:
-    repository: bosh/security-scanner
-    username: ((docker.username))
-    password: ((docker.password))
+  - name: weekly
+    type: time
+    source:
+      initial_version: true
+      start: 3:00 -0700
+      stop: 4:30 -0700
+      days: [ Saturday ]
 
-- name: release-notes
-  type: gcs
-  source:
-    bucket: os-conf-pipeline
-    json_key: ((cloud-foundry-gcp-credentials))
-    versioned_file: release-notes.md
-    initial_version: "0"
-    initial_content_text: ""
+  - name: bosh-ecosystem-registry-image
+    type: registry-image
+    source:
+      repository: bosh/bosh-ecosystem-concourse
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
 
-- name: github-release
-  type: github-release
-  source:
-    owner: cloudfoundry
-    repository: os-conf-release
-    access_token: ((github_public_repo_token))
+  - name: bosh-security-scanner-registry-image
+    type: registry-image
+    source:
+      repository: bosh/security-scanner
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
+
+  - name: release-notes
+    type: gcs
+    source:
+      bucket: os-conf-pipeline
+      json_key: ((gcp_json_key))
+      versioned_file: release-notes.md
+      initial_version: "0"
+      initial_content_text: ""
+
+  - name: github-release
+    type: github-release
+    source:
+      owner: cloudfoundry
+      repository: os-conf-release
+      access_token: ((github_public_repo_token))
 
 jobs:
-- name: os-conf-release-acceptance-tests-jammy
-  serial: true
-  plan:
-  - in_parallel:
-    - get: os-conf-release
-      trigger: true
-    - get: ubuntu-jammy-stemcell
-      trigger: true
-    - get: bosh-ecosystem-registry-image
-  - task: run-ubuntu-jammy-os-conf-acceptance-tests
-    file: os-conf-release/ci/tasks/run-acceptance-tests.yml
-    image: bosh-ecosystem-registry-image
-    params:
-      BOSH_CA_CERT: ((iaas_directors_labs-gcp-director_bosh_ca_cert.ca))
-      BOSH_CLIENT: ((iaas_directors_labs-gcp-director_bosh_client.username))
-      BOSH_CLIENT_SECRET: ((iaas_directors_labs-gcp-director_bosh_client.password))
-      BOSH_DEPLOYMENT: os-conf-jammy
-      BOSH_ENVIRONMENT: ((iaas_directors_labs-gcp-director_bosh_environment))
-      BOSH_STEMCELL_OS: ubuntu-jammy
-      BOSH_STEMCELL_NAME: bosh-google-kvm-ubuntu-jammy-go_agent
-    input_mapping:
-      stemcell: ubuntu-jammy-stemcell
-    tags: [ broadcom ]
+  - name: acceptance-tests-jammy
+    serial: true
+    plan:
+      - in_parallel:
+          - get: os-conf-release
+            trigger: true
+          - get: ubuntu-jammy
+            trigger: true
+          - get: bosh-ecosystem-registry-image
+          - get: bosh-deployment
+          - get: cf-deployment-concourse-tasks-registry-image
+      - do:
+          - task: bbl-up
+            file: os-conf-release/ci/tasks/bbl-up.yml
+            image: cf-deployment-concourse-tasks-registry-image
+            params:
+              BBL_GCP_REGION: &bbl-gcp-region europe-west1
+              BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp_json_key))
+          - task: extract-bbl-env
+            file: os-conf-release/ci/tasks/extract-bbl-env.yml
+            image: cf-deployment-concourse-tasks-registry-image
+          - load_var: bbl-env
+            file: bosh-env/metadata.yml
+            format: yml
+          - task: run-ubuntu-jammy-os-conf-acceptance-tests
+            file: os-conf-release/ci/tasks/run-acceptance-tests.yml
+            image: bosh-ecosystem-registry-image
+            params:
+              BOSH_CA_CERT: "((.:bbl-env.BOSH_CA_CERT))"
+              BOSH_CLIENT: "((.:bbl-env.BOSH_CLIENT))"
+              BOSH_CLIENT_SECRET: "((.:bbl-env.BOSH_CLIENT_SECRET))"
+              BOSH_ENVIRONMENT: "((.:bbl-env.BOSH_ENVIRONMENT))"
+              BOSH_JUMPBOX_PRIVATE_KEY: "((.:bbl-env.INSTANCE_JUMPBOX_PRIVATE))"
+              BOSH_JUMPBOX_IP: "((.:bbl-env.INSTANCE_JUMPBOX_EXTERNAL_IP))"
+              BOSH_JUMPBOX_USER: "((.:bbl-env.INSTANCE_JUMPBOX_USER))"
+              BOSH_STEMCELL_OS: ubuntu-jammy
+              BOSH_STEMCELL_NAME: bosh-google-kvm-ubuntu-jammy-go_agent
+            input_mapping:
+              stemcell: ubuntu-jammy
+        ensure:
+          task: bbl-down
+          file: os-conf-release/ci/tasks/bbl-down.yml
+          image: cf-deployment-concourse-tasks-registry-image
+          params:
+            BBL_GCP_REGION: *bbl-gcp-region
+            BBL_GCP_SERVICE_ACCOUNT_KEY: ((gcp_json_key))
 
-- name: bump-deps
-  plan:
-  - in_parallel:
-    - get: os-conf-release
-    - get: golang-release
-    - get: weekly
-      trigger: true
-  - task: bump-deps
-    file: golang-release/ci/tasks/shared/bump-deps.yml
-    tags: [ broadcom ]
-    input_mapping:
-      input_repo: os-conf-release
-    output_mapping:
-      output_repo: bumped-os-conf-release
-    params:
-      SOURCE_PATH: src/os-conf-acceptance-tests
-      GOPROXY: ((repository_mirrors.goproxy))
-      GOSUMDB: ((repository_mirrors.gosumdb))
-  - put: os-conf-release
-    params:
-      repository: bumped-os-conf-release
-      rebase: true
-
-- name: automatically-release-new-patch
-  serial: true
-  plan:
-    - in_parallel:
-        - get: os-conf-release
-          trigger: true
-          passed:
-            - os-conf-release-acceptance-tests-jammy
-        - get: bosh-shared-ci
-        - get: os-conf-version
-        - get: bosh-security-scanner-registry-image
-    - try:
-        task: check-for-patched-cves
-        file: bosh-shared-ci/tasks/release/check-for-patched-cves.yml
-        image: bosh-security-scanner-registry-image
+  - name: bump-deps
+    plan:
+      - in_parallel:
+          - get: os-conf-release
+          - get: golang-release
+          - get: weekly
+            trigger: true
+      - task: bump-deps
+        file: golang-release/ci/tasks/shared/bump-deps.yml
         input_mapping:
           input_repo: os-conf-release
+        output_mapping:
+          output_repo: bumped-os-conf-release
+        params:
+          SOURCE_PATH: src/os-conf-acceptance-tests
+      - put: os-conf-release
+        params:
+          repository: bumped-os-conf-release
+          rebase: true
+
+  - name: automatically-release-new-patch
+    serial: true
+    plan:
+      - in_parallel:
+          - get: os-conf-release
+            trigger: true
+            passed:
+              - acceptance-tests-jammy
+          - get: bosh-shared-ci
+          - get: os-conf-version
+          - get: bosh-security-scanner-registry-image
+      - try:
+          task: check-for-patched-cves
+          file: bosh-shared-ci/tasks/release/check-for-patched-cves.yml
+          image: bosh-security-scanner-registry-image
+          input_mapping:
+            input_repo: os-conf-release
+            version: os-conf-version
+          params:
+            SEVERITY: CRITICAL,HIGH
+            SOURCE_PATH: src
+          on_success:
+            do:
+              - put: release-notes
+                params:
+                  file: patched_cves/release-notes.md
+              - put: os-conf-version
+                params:
+                  bump: patch
+      - task: ensure-cve-checker-succeeded
+        file: bosh-shared-ci/tasks/release/ensure-task-succeeded.yml
+        image: bosh-security-scanner-registry-image
+        input_mapping:
+          task-output-folder: patched_cves
+
+  - name: create-final-release
+    disable_manual_trigger: true
+    plan:
+      - in_parallel:
+          - get: os-conf-release
+            passed:
+              - acceptance-tests-jammy
+          - get: os-conf-version
+            trigger: true
+          - get: release-notes
+          - get: bosh-ecosystem-registry-image
+          - get: bosh-shared-ci
+      - task: create-final-release
+        file: bosh-shared-ci/tasks/release/create-final-release.yml
+        image: bosh-ecosystem-registry-image
+        input_mapping:
+          release_repo: os-conf-release
           version: os-conf-version
         params:
-          SEVERITY: CRITICAL,HIGH
-          SOURCE_PATH: src
-        on_success:
-          do:
-            - put: release-notes
-              params:
-                file: patched_cves/release-notes.md
-            - put: os-conf-version
-              params:
-                bump: patch
-    - task: ensure-cve-checker-succeeded
-      file: bosh-shared-ci/tasks/release/ensure-task-succeeded.yml
-      image: bosh-security-scanner-registry-image
-      input_mapping:
-        task-output-folder: patched_cves
-- name: create-final-release
-  disable_manual_trigger: true
-  plan:
-    - in_parallel:
-        - get: os-conf-release
-          passed:
-            - os-conf-release-acceptance-tests-jammy
-        - get: os-conf-version
-          trigger: true
-        - get: release-notes
-        - get: bosh-ecosystem-registry-image
-        - get: bosh-shared-ci
-    - task: create-final-release
-      file: bosh-shared-ci/tasks/release/create-final-release.yml
-      image: bosh-ecosystem-registry-image
-      input_mapping:
-        release_repo: os-conf-release
-        version: os-conf-version
-      params:
-        GIT_USER_NAME: CI Bot
-        GIT_USER_EMAIL: bots@cloudfoundry.org
-        PRIVATE_YML: |
-          ---
-          blobstore:
-            provider: gcs
-            options:
-              credentials_source: static
-              json_key: '((cloud-foundry-gcp-credentials))'
-    - put: os-conf-release
-      params:
-        repository: release_repo
-        rebase: true
-        tag: release_metadata/tag-name
-    - put: github-release
-      params:
-        name: release_metadata/tag-name
-        tag: release_metadata/tag-name
-        body: release-notes/release-notes.md
-        generate_release_notes: true
-        commitish: os-conf-release/.git/ref
-    - put: release-notes
-      params:
-        file: release_metadata/empty-file
+          GIT_USER_NAME: CI Bot
+          GIT_USER_EMAIL: bots@cloudfoundry.org
+          PRIVATE_YML: |
+            ---
+            blobstore:
+              provider: gcs
+              options:
+                credentials_source: static
+                json_key: '((gcp_json_key))'
+      - put: os-conf-release
+        params:
+          repository: release_repo
+          rebase: true
+          tag: release_metadata/tag-name
+      - put: github-release
+        params:
+          name: release_metadata/tag-name
+          tag: release_metadata/tag-name
+          body: release-notes/release-notes.md
+          generate_release_notes: true
+          commitish: os-conf-release/.git/ref
+      - put: release-notes
+        params:
+          file: release_metadata/empty-file
 
-- name: create-final-release-major
-  serial: true
-  plan:
-    - put: os-conf-version
-      params:
-        bump: major
+  - name: create-final-release-major
+    serial: true
+    plan:
+      - put: os-conf-version
+        params:
+          bump: major
 
-- name: create-final-release-minor
-  serial: true
-  plan:
-    - put: os-conf-version
-      params:
-        bump: minor
+  - name: create-final-release-minor
+    serial: true
+    plan:
+      - put: os-conf-version
+        params:
+          bump: minor
 
-- name: create-final-release-patch
-  serial: true
-  plan:
-    - put: os-conf-version
-      params:
-        bump: patch
+  - name: create-final-release-patch
+    serial: true
+    plan:
+      - put: os-conf-version
+        params:
+          bump: patch

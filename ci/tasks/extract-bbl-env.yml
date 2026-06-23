@@ -1,0 +1,12 @@
+---
+platform: linux
+
+inputs:
+  - name: bbl-state
+  - name: os-conf-release
+
+outputs:
+  - name: bosh-env
+
+run:
+  path: os-conf-release/ci/tasks/extract-bbl-env.sh
