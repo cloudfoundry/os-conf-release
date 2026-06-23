@@ -30,6 +30,11 @@ resources:
     source:
       name: bosh-google-kvm-ubuntu-jammy-go_agent
 
+  - name: ubuntu-noble
+    type: bosh-io-stemcell
+    source:
+      name: bosh-google-kvm-ubuntu-noble
+
   - name: os-conf-version
     type: semver
     source:
@@ -90,13 +95,15 @@ resources:
       access_token: ((github_public_repo_token))
 
 jobs:
-  - name: acceptance-tests-jammy
+  - name: acceptance-tests
     serial: true
     plan:
       - in_parallel:
           - get: os-conf-release
             trigger: true
-          - get: ubuntu-jammy
+          - get: &jammy ubuntu-jammy
+            trigger: true
+          - get: &noble ubuntu-noble
             trigger: true
           - get: bosh-ecosystem-registry-image
           - get: bosh-deployment
@@ -114,7 +121,8 @@ jobs:
           - load_var: bbl-env
             file: bosh-env/metadata.yml
             format: yml
-          - task: run-ubuntu-jammy-os-conf-acceptance-tests
+      - in_parallel:
+          - task: acceptance-tests-jammy
             file: os-conf-release/ci/tasks/run-acceptance-tests.yml
             image: bosh-ecosystem-registry-image
             params:
@@ -125,10 +133,24 @@ jobs:
               BOSH_JUMPBOX_PRIVATE_KEY: "((.:bbl-env.INSTANCE_JUMPBOX_PRIVATE))"
               BOSH_JUMPBOX_IP: "((.:bbl-env.INSTANCE_JUMPBOX_EXTERNAL_IP))"
               BOSH_JUMPBOX_USER: "((.:bbl-env.INSTANCE_JUMPBOX_USER))"
-              BOSH_STEMCELL_OS: ubuntu-jammy
-              BOSH_STEMCELL_NAME: bosh-google-kvm-ubuntu-jammy-go_agent
+              BOSH_STEMCELL_OS: *jammy
             input_mapping:
-              stemcell: ubuntu-jammy
+              stemcell: *jammy
+          - try:
+              task: acceptance-tests-noble
+              file: os-conf-release/ci/tasks/run-acceptance-tests.yml
+              image: bosh-ecosystem-registry-image
+              params:
+                BOSH_CA_CERT: "((.:bbl-env.BOSH_CA_CERT))"
+                BOSH_CLIENT: "((.:bbl-env.BOSH_CLIENT))"
+                BOSH_CLIENT_SECRET: "((.:bbl-env.BOSH_CLIENT_SECRET))"
+                BOSH_ENVIRONMENT: "((.:bbl-env.BOSH_ENVIRONMENT))"
+                BOSH_JUMPBOX_PRIVATE_KEY: "((.:bbl-env.INSTANCE_JUMPBOX_PRIVATE))"
+                BOSH_JUMPBOX_IP: "((.:bbl-env.INSTANCE_JUMPBOX_EXTERNAL_IP))"
+                BOSH_JUMPBOX_USER: "((.:bbl-env.INSTANCE_JUMPBOX_USER))"
+                BOSH_STEMCELL_OS: *noble
+              input_mapping:
+                stemcell: *noble
         ensure:
           task: bbl-down
           file: os-conf-release/ci/tasks/bbl-down.yml
@@ -164,7 +186,7 @@ jobs:
           - get: os-conf-release
             trigger: true
             passed:
-              - acceptance-tests-jammy
+              - acceptance-tests
           - get: bosh-shared-ci
           - get: os-conf-version
           - get: bosh-security-scanner-registry-image
@@ -198,7 +220,7 @@ jobs:
       - in_parallel:
           - get: os-conf-release
             passed:
-              - acceptance-tests-jammy
+              - acceptance-tests
           - get: os-conf-version
             trigger: true
           - get: release-notes
