@@ -13,10 +13,9 @@ import (
 )
 
 var (
-	boshBinaryPath   string
-	deploymentName   string
-	boshStemcellOS   string
-	boshStemcellName string
+	boshBinaryPath string
+	deploymentName string
+	boshStemcellOS string
 )
 
 func TestOsConfAcceptanceTests(t *testing.T) {
@@ -27,7 +26,6 @@ func TestOsConfAcceptanceTests(t *testing.T) {
 var _ = BeforeSuite(func() {
 	boshBinaryPath = assertEnvExists("BOSH_BINARY_PATH")
 	boshStemcellOS = assertEnvExists("BOSH_STEMCELL_OS")
-	boshStemcellName = assertEnvExists("BOSH_STEMCELL_NAME")
 
 	deploymentName = fmt.Sprintf("os-conf-acceptance-tests_%s", boshStemcellOS)
 
@@ -62,8 +60,6 @@ func deployOSConfDeployment() {
 		"assets/manifest.yml",
 		"-v",
 		fmt.Sprintf("stemcell_os=%s", boshStemcellOS),
-		"-v",
-		fmt.Sprintf("stemcell_name=%s", boshStemcellName),
 		"-v",
 		fmt.Sprintf("deployment_name=%s", deploymentName),
 	)
