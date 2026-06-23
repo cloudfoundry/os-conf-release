@@ -1,0 +1,13 @@
+---
+platform: linux
+
+inputs:
+  - name: bbl-state
+  - name: os-conf-release
+
+params:
+  BBL_GCP_SERVICE_ACCOUNT_KEY: ~
+  BBL_GCP_REGION: ~
+
+run:
+  path: os-conf-release/ci/tasks/bbl-down.sh
