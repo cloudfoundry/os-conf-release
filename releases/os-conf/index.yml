@@ -53,6 +53,8 @@ builds:
     version: 22.1.2
   c8b0030c-f8a5-49bf-6023-6ae4f3eeaea7:
     version: "12"
+  cf646c50-fa54-4532-6417-aa41eed249e8:
+    version: 23.0.1
   e577c55f-22c5-425c-4d3e-ba802dd889e6:
     version: 20.0.0
   ea58d72a-6810-4cc4-75da-afa8d538676a:
