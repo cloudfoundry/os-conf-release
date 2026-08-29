@@ -35,6 +35,8 @@ builds:
     version: "2"
   80727c1e-4d33-4e88-4a73-fe21208bcdd0:
     version: 22.1.1
+  84565c30-c566-488f-57eb-79520aa90115:
+    version: 23.0.3
   87a5420b-e583-4c10-4fc8-5efb34983f24:
     version: 23.0.0
   915baeab-1f1a-4b84-4ec1-3859a40f6864:
