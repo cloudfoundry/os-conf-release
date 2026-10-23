@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -ex
+set -e
+set +x
+<% require 'shellwords' %>
 
 <% if p('persistent_homes') %>
   home_dir="/var/vcap/store/home"
@@ -15,53 +17,51 @@ set -ex
       crypted_password = user_hash['crypted_password']
       public_key = user_hash['public_key']
 
-      if user.nil? || user.empty?
-        raise "User must be configured with a 'name' attribute. '#{user_hash}'"
+      unless user.is_a?(String) && /\A[A-Za-z_][A-Za-z0-9_.-]*\$?\z/.match(user)
+        raise "User must be configured with a valid 'name' attribute."
       end
 
       if crypted_password.nil? && public_key.nil?
         raise "User: '#{user}' must contain one of 'crypted_password' or 'public_key' key/values."
       end
 
-      if !crypted_password.nil? && !crypted_password.match(/^\$6\$/)
-        raise "User: '#{user}' with crypted_password: '#{crypted_password}' does not appear to be a SHA512 encrypted password."
+      if !crypted_password.nil? && !/\A\$6\$/.match(crypted_password)
+        raise "User: '#{user}' crypted_password does not appear to be a SHA512 encrypted password."
       end
       %>
 
-  getent passwd <%=user%> > /dev/null || useradd --create-home <%=user%> --base-dir "$home_dir"
-  chown -R <%=user%>: "$home_dir/<%=user%>"
-  passwd -d <%=user%>
+  getent passwd <%= Shellwords.escape(user) %> > /dev/null || useradd --create-home --base-dir "$home_dir" -- <%= Shellwords.escape(user) %>
+  passwd -l -- <%= Shellwords.escape(user) %>
+  # -R without -L never follows symlinks, so this only changes entries inside the home.
+  chown -R -h -- <%= Shellwords.escape("#{user}:") %> "$home_dir/"<%= Shellwords.escape(user) %>
 
-  <% if user_hash['shell'].nil? %>
-    usermod -s /bin/bash <%=user%>
-  <% else %>
-    usermod -s <%=user_hash['shell']%> <%=user%>
-  <% end %>
+  usermod -s <%= Shellwords.escape((user_hash['shell'] || '/bin/bash').to_s) %> -- <%= Shellwords.escape(user) %>
 
   if grep -q 'bosh_sshers' /etc/group; then
     <% if sudo %>
-      usermod -G vcap,admin,bosh_sudoers,bosh_sshers <%=user%>
+      usermod -G vcap,admin,bosh_sudoers,bosh_sshers -- <%= Shellwords.escape(user) %>
     <% else %>
-      usermod -G vcap,bosh_sshers <%=user%>
+      usermod -G vcap,bosh_sshers -- <%= Shellwords.escape(user) %>
     <% end %>
   fi
 
-  chmod 700 ~<%=user%>
-  mkdir -p ~<%=user%>/.ssh
-  chmod 700 ~<%=user%>/.ssh
-  rm -f ~<%=user%>/.ssh/authorized_keys
-  chown -R <%=user%> ~<%=user%>/.ssh
+  # All operations below the user's home run with the user's permissions.
+  # This also applies when an existing path is replaced during a redeploy.
+  user_home=$(getent passwd <%= Shellwords.escape(user) %> | cut -d: -f6)
+  runuser -u <%= Shellwords.escape(user) %> -- bash -e -c '
+    home=$1
+    chmod 700 "$home"
+    mkdir -p "$home/.ssh"
+    chmod 700 "$home/.ssh"
+    rm -f "$home/.ssh/authorized_keys"
+    if [ "$2" = true ]; then
+      umask 077
+      printf "%s\n" "$3" > "$home/.ssh/authorized_keys"
+      chmod 600 "$home/.ssh/authorized_keys"
+    fi
+  ' -- "$user_home" <%= public_key.nil? ? 'false' : 'true' %> <%= Shellwords.escape(public_key.to_s) %>
 
   <% if !crypted_password.nil? %>
-    echo '<%=user%>:<%=crypted_password%>' | chpasswd -e
-  <% end %>
-
-  <% if !public_key.nil?  %>
-    echo '<%=public_key%>' > ~<%=user%>/.ssh/authorized_keys
-    chmod 600 ~<%=user%>/.ssh/authorized_keys
-    chown -R <%=user%> ~<%=user%>/.ssh
-    <% if crypted_password.nil? %>
-      passwd -l <%=user%>
-    <% end %>
+    printf '%s\n' <%= Shellwords.escape("#{user}:#{crypted_password}") %> | chpasswd -e
   <% end %>
 <% end %>

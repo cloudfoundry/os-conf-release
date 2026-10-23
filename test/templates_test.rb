@@ -61,6 +61,7 @@ class TemplatesTest < Minitest::Test
     _stdout, stderr, status = Open3.capture3({'PATH' => "#{@bin}:#{ENV.fetch('PATH')}"}, 'bash', stdin_data: script)
     assert status.success?, stderr
     refute File.exist?(@marker), 'Property text executed as a shell command'
+    stderr
   end
 
   def test_login_banner_preserves_heredoc_markers_and_shell_syntax
@@ -139,4 +140,57 @@ class TemplatesTest < Minitest::Test
       end
     end
   end
+  def user_add_stubs(fail_usermod = false)
+    home = File.join(@directory, 'home/testuser')
+    FileUtils.mkdir_p(home)
+    FileUtils.mkdir_p(File.join(@directory, 'etc'))
+    File.write(File.join(@directory, 'etc/group'), '')
+    scripts = {
+      'getent' => "printf '%s\\n' 'testuser:x:123:123::#{home}:/bin/bash'",
+      'passwd' => "printf '%s\\n' \"$*\" >> '#{@directory}/password-actions'",
+      'usermod' => fail_usermod ? 'exit 1' : 'exit 0',
+      'chpasswd' => "cat > '#{@directory}/password-input'",
+      'chown' => "printf '%s\\n' \"$*\" > '#{@directory}/chown'",
+      'runuser' => "printf '%s\\n' \"$1 $2 $3\" > '#{@directory}/runuser'; shift 3; exec \"$@\""
+    }
+    scripts.each do |name, body|
+      File.write(File.join(@bin, name), "#!/bin/bash\n#{body}\n")
+      FileUtils.chmod(0755, File.join(@bin, name))
+    end
+    home
+  end
+
+  def test_user_add_treats_shell_key_and_hash_as_data_and_does_not_trace_hashes
+    home = user_add_stubs
+    key = "ssh-rsa key'; touch #{@marker}; #"
+    hash = "$6$salt$hash'; touch #{@marker}; #"
+    user = {'name' => 'testuser', 'sudo' => false, 'public_key' => key,
+            'crypted_password' => hash, 'shell' => "/bin/bash; touch #{@marker}"}
+    trace = execute("set -x\n" + render('user_add', {'persistent_homes' => false, 'users' => [user]}))
+    assert_equal key + "\n", File.read(File.join(home, '.ssh/authorized_keys'))
+    assert_equal "testuser:#{hash}\n", File.read(File.join(@directory, 'password-input'))
+    refute_includes trace, hash
+    assert_equal "-l -- testuser\n", File.read(File.join(@directory, 'password-actions'))
+    assert_equal "-u testuser --\n", File.read(File.join(@directory, 'runuser'))
+    assert_equal "-R -h -- testuser: /home/testuser\n", File.read(File.join(@directory, 'chown'))
+  end
+
+  def test_user_add_rejects_shell_syntax_in_user_names
+    ['bad; true', "good\nbad", '-root', '../root'].each do |name|
+      assert_raises(RuntimeError) do
+        render('user_add', {'persistent_homes' => false, 'users' => [{'name' => name, 'public_key' => 'key'}]})
+      end
+    end
+  end
+
+  def test_user_add_failure_leaves_password_locked
+    user_add_stubs(true)
+    script = render('user_add', {'persistent_homes' => false,
+                                'users' => [{'name' => 'testuser', 'crypted_password' => '$6$salt$hash'}]})
+    _out, _err, status = Open3.capture3({'PATH' => "#{@bin}:#{ENV.fetch('PATH')}"}, 'bash', stdin_data: script)
+    refute status.success?
+    assert_equal "-l -- testuser\n", File.read(File.join(@directory, 'password-actions'))
+    refute File.exist?(File.join(@directory, 'password-input'))
+  end
+
 end
