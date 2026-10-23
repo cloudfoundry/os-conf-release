@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
+<% require 'shellwords' %>
 
 <% p('modules').each do |m| %>
-  modprobe <%= m %> || true
+  modprobe -- <%= Shellwords.escape(m.to_s) %> || true
 <% end %>

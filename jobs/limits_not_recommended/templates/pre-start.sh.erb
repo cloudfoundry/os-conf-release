@@ -1,9 +1,10 @@
 #!/bin/bash
 
 set -ex
+<% require 'shellwords' %>
 
 cp -f /var/vcap/jobs/limits_not_recommended/etc/limits.conf /etc/security/limits.d/61-bosh-os-conf.conf
 
 <% if_p("limits_systemd_default_nofile") do | limit_nofile| %>
-echo "DefaultLimitNOFILE=<%= p("limits_systemd_default_nofile") %>" >> /etc/systemd/system.conf
+printf '%s\n' <%= Shellwords.escape("DefaultLimitNOFILE=#{limit_nofile}") %> >> /etc/systemd/system.conf
 <% end %>

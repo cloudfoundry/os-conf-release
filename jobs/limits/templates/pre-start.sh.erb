@@ -2,6 +2,11 @@
 
 set -ex
 
+<% %w[soft hard].each do |name|
+     value = p("nofile.#{name}").to_s
+     raise "nofile.#{name} must be a non-negative integer" unless /\A[0-9]+\z/.match(value)
+   end %>
+
 NEW_NOFILE="DefaultLimitNOFILE=<%= p("nofile.soft") %>:<%= p("nofile.hard") %>"
 LINE=$(grep -nE '^DefaultLimitNOFILE=' /etc/systemd/system.conf | tail -1 | awk -F: '{print $1}')
 if [[ -n "$LINE" ]]; then

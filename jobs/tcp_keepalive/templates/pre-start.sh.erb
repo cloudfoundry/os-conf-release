@@ -2,6 +2,11 @@
 
 set -ex
 
+<% %w[time interval probes].each do |name|
+     value = p("tcp_keepalive.#{name}").to_s
+     raise "tcp_keepalive.#{name} must be a non-negative integer" unless /\A[0-9]+\z/.match(value)
+   end %>
+
 # In case VM is restarted
 cat > /etc/sysctl.d/70-bosh-tcp-keepalive.conf <<EOF
 net.ipv4.tcp_keepalive_time=<%= p('tcp_keepalive.time') %>

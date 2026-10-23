@@ -1,19 +1,15 @@
 #!/bin/bash
 
 set -xeu -o pipefail
+<% require 'shellwords' %>
 
 date
-echo Delaying start for '<%= p("pre_start_delay") %>' seconds
-sleep '<%= p("pre_start_delay") %>'
+printf 'Delaying start for %s seconds\n' <%= Shellwords.escape(p("pre_start_delay").to_s) %>
+sleep -- <%= Shellwords.escape(p("pre_start_delay").to_s) %>
 date
 
 if ! grep -e '^-e 2$' /etc/audit/rules.d/audit.rules -q; then
-  echo '
-# Custom rules; added by auditd job (os-conf-release)
-<% p("rules").each do |rule| %>
-<%= rule %>
-<% end %>
-' >> /etc/audit/rules.d/audit.rules
+  printf '%s\n' '# Custom rules; added by auditd job (os-conf-release)' <%= Shellwords.escape(p('rules').join("\n")) %> >> /etc/audit/rules.d/audit.rules
 
   echo '
 # Make audit rules immutable; added by auditd job (os-conf-release)

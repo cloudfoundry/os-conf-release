@@ -1,16 +1,17 @@
 #!/bin/bash
 
 set -ex
+<% require 'shellwords' %>
 
 sed -i '/^search/d' /etc/resolvconf/resolv.conf.d/tail
 sed -i '/^options/d' /etc/resolvconf/resolv.conf.d/tail
 
 <% if_p("search") do |domain| %>
-echo "search <%= domain %>" >> /etc/resolvconf/resolv.conf.d/tail
+printf '%s\n' <%= Shellwords.escape("search #{domain}") %> >> /etc/resolvconf/resolv.conf.d/tail
 <% end %>
 
 <% p("options").each do | option | %>
-echo "options <%= option %>" >> /etc/resolvconf/resolv.conf.d/tail
+printf '%s\n' <%= Shellwords.escape("options #{option}") %> >> /etc/resolvconf/resolv.conf.d/tail
 <% end %>
 
 /sbin/resolvconf -u

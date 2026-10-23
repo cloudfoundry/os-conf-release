@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -ex
+<% require 'shellwords' %>
 
-cat << 'EOF' > /etc/issue.net
-<%= p('login_banner.text') %>
-EOF
+printf '%s\n' <%= Shellwords.escape(p('login_banner.text').to_s) %> > /etc/issue.net
