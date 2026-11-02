@@ -18,7 +18,7 @@ resources:
     source:
       uri: git@github.com:cloudfoundry/os-conf-release.git
       private_key: ((github_deploy_key_os-conf-release.private_key))
-      branch: master
+      branch: main
 
   - name: golang-release
     type: git
