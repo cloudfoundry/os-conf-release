@@ -57,6 +57,8 @@ builds:
     version: 22.2.0
   be9f85a4-2341-4a4c-771d-1da99af4d0df:
     version: 22.1.2
+  bec9e07a-8300-4829-7cde-7a47b5723aed:
+    version: 23.0.5
   c8b0030c-f8a5-49bf-6023-6ae4f3eeaea7:
     version: "12"
   cf646c50-fa54-4532-6417-aa41eed249e8:
